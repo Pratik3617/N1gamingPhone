@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:n1gaming/Result/Result.dart';
+import 'package:n1gaming/Transaction/Transaction.dart';
 
 class DrawerWidget extends StatelessWidget{
   @override
@@ -41,7 +43,12 @@ class DrawerWidget extends StatelessWidget{
                 color: Color.fromARGB(255, 30, 58, 58),
               ),),
               onTap: () {
-                // Implement item 2 functionality here
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Transaction(),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -53,7 +60,12 @@ class DrawerWidget extends StatelessWidget{
                 color: Color.fromARGB(255, 30, 58, 58),
               ),),
               onTap: () {
-                // Implement item 2 functionality here
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Result(),
+                  ),
+                );
               },
             ),
             

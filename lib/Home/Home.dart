@@ -22,9 +22,7 @@ class Home extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 5),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.start, 
           crossAxisAlignment: CrossAxisAlignment.start,
-          // Align widgets to the start of the column
           children: [
             HomeHeader(),
             const SizedBox(height: 2), // Add some space between the widgets
