@@ -74,6 +74,7 @@ class _updatePoints extends State<HomeRight> {
 
     // Calculate the grand total and update the notifier
     int grandTotal = sumList.reduce((value, element) => value + element);
+    
     currentValueNotifier.value = grandTotal;
   }
 

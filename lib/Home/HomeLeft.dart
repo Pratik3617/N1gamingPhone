@@ -27,7 +27,14 @@ class HomeLeftWidget extends State<HomeLeft>{
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CheckBoxWithContent(isChecked: isChecked,content: "A To T",onChanged: onCheckBoxChanged),
+        Consumer<GameSelector>(
+              builder: (context, select, child) {
+                  return CheckBoxWithContent(isChecked: select.atIsChecked,content: "A To T",onChanged: (bool? value) {
+                            select.toggleAT(value);
+                          },);
+              }
+        ),
+        
         Container(
           width: MediaQuery.of(context).size.width * 0.15,
           height: MediaQuery.of(context).size.height * 0.06,

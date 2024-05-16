@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 
 class EvenOddCheckBox extends StatelessWidget {
-  final bool isChecked;
-  final void Function(bool?)? onChanged; // Update type to accept nullable boolean
+  final bool isCheckedAll;
+  final bool isCheckedEven;
+  final bool isCheckedOdd;
+  final void Function(bool?)? onChangedAll; // Update type to accept nullable boolean
+  final void Function(bool?)? onChangedEven; 
+  final void Function(bool?)? onChangedOdd; 
 
   EvenOddCheckBox({
-    required this.isChecked,
-    required this.onChanged,
+    required this.isCheckedAll,
+    required this.isCheckedEven,
+    required this.isCheckedOdd,
+    required this.onChangedAll,
+    required this.onChangedEven,
+    required this.onChangedOdd,
   });
 
   @override
@@ -24,13 +32,13 @@ class EvenOddCheckBox extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start, 
         children: [
           Checkbox(
-            value: isChecked,
-            onChanged: onChanged,
-            visualDensity: VisualDensity(horizontal: -3, vertical: -3), // Adjust the values here
+            value: isCheckedAll,
+            onChanged: onChangedAll,
+            visualDensity: const VisualDensity(horizontal: -3, vertical: -3), // Adjust the values here
           ),
-          Text(
+          const Text(
             "All",
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'SansSerif',
               fontSize: 12.0,
               fontWeight: FontWeight.bold,
@@ -39,13 +47,13 @@ class EvenOddCheckBox extends StatelessWidget {
           ),
 
           Checkbox(
-            value: isChecked,
-            onChanged: onChanged,
-            visualDensity: VisualDensity(horizontal: -3, vertical: -3), // Adjust the values here
+            value: isCheckedEven,
+            onChanged: onChangedEven,
+            visualDensity: const VisualDensity(horizontal: -3, vertical: -3), // Adjust the values here
           ),
-          Text(
+          const Text(
             "Even",
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'SansSerif',
               fontSize: 12.0,
               fontWeight: FontWeight.bold,
@@ -54,13 +62,13 @@ class EvenOddCheckBox extends StatelessWidget {
           ),
 
           Checkbox(
-            value: isChecked,
-            onChanged: onChanged,
-            visualDensity: VisualDensity(horizontal: -3, vertical: -3), // Adjust the values here
+            value: isCheckedOdd,
+            onChanged: onChangedOdd,
+            visualDensity: const VisualDensity(horizontal: -3, vertical: -3), // Adjust the values here
           ),
-          Text(
+          const Text(
             "Odd",
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: 'SansSerif',
               fontSize: 12.0,
               fontWeight: FontWeight.bold,

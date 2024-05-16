@@ -130,19 +130,26 @@ bool isChecked = false;
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CheckBoxWithContent(content: "A TO J",isChecked: isChecked,onChanged: onCheckBoxChanged,),
+                CheckBoxWithContent(content: "A TO J",isChecked: select.ajIsChecked,onChanged: (bool? value) =>
+                                  select.toggleAJ(value)),
               ],
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CheckBoxWithContent(content: "K TO T",isChecked: isChecked,onChanged: onCheckBoxChanged,)
+                CheckBoxWithContent(content: "K TO T",isChecked: select.ktIsChecked,onChanged: (bool? value) =>
+                                  select.toggleKT(value))
               ],
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                EvenOddCheckBox(isChecked: isChecked, onChanged: onCheckBoxChanged),
+                EvenOddCheckBox(isCheckedAll: select.allIsChecked,isCheckedEven: select.evenIsChecked,isCheckedOdd: select.oddIsChecked, onChangedAll: (bool? value) =>
+                                    select.toggleAll(value),onChangedEven: (bool? value) =>
+                                    select.toggleEven(value),
+                                    onChangedOdd: (bool? value) =>
+                                    select.toggleOdd(value),
+                ),
               ],
             ),
             
@@ -225,7 +232,8 @@ bool isChecked = false;
                 Check_Button(text: "FP", 
                   width: MediaQuery.of(context).size.width * 0.07,
                   height: MediaQuery.of(context).size.height * 0.08, 
-                  onChange: onCheckBoxChanged, isChecked: isChecked)
+                  onChange: (bool? value) =>
+                                  select.toggleFP(value), isChecked: select.fpIsChecked)
               ],
             ),
           ],

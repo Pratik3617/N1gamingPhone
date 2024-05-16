@@ -20,8 +20,11 @@ class BottomButton extends StatelessWidget {
     required this.textcolor,
   });
 
+  
+
   @override
   Widget build(BuildContext context){
+    
     return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -44,7 +47,7 @@ class BottomButton extends StatelessWidget {
                     child: Text(text,
                         style: TextStyle(
                             fontFamily: "SansSerif",
-                            letterSpacing: 2.0,
+                            letterSpacing: 1.0,
                             fontSize: MediaQuery.of(context).size.width * 0.02,
                             color: textcolor,
                             fontWeight: FontWeight.bold

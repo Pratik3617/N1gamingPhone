@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:n1gaming/Login/Login.dart';
 import 'package:n1gaming/Provider/GameSelector.dart';
 import 'package:n1gaming/Provider/ResultProvider.dart';
 import 'package:n1gaming/Provider/TransactionProvider.dart';
@@ -10,14 +11,14 @@ import 'package:provider/provider.dart';
 import "Home/Home.dart";
 
 void main() {
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   WidgetsFlutterBinding.ensureInitialized();
+  
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
-
   
-
   runApp(
     MultiProvider(
       providers: [
@@ -46,7 +47,7 @@ void main() {
         //     bodyText2: customTextStyle,
         //   ),
         // ),
-        home: Home(),
+        home:  Home(),
         routes: {
           '/result': (_) => Result(),
           // '/accounts': (_) => Accounts(),

@@ -1,7 +1,6 @@
 // ignore_for_file: constant_identifier_names
 // import 'package:http/http.dart' as http;
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -240,6 +239,8 @@ class GameSelector with ChangeNotifier {
   List<List<TextEditingController>> get newControllers {
     return controllers;
   }
+
+  int grandTotal = 0;
 
   TextEditingController lpController = TextEditingController();
 

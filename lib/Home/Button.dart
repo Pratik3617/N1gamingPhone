@@ -21,6 +21,7 @@ class Button extends StatelessWidget {
                 margin: EdgeInsets.fromLTRB(5, 3, 2, 2),
                 child: Center(
                   child: TextField(
+                  keyboardType: TextInputType.number,
                   controller: controller,
                   style: const TextStyle(
                     fontSize: 11.0,

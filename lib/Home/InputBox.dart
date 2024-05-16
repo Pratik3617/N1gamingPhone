@@ -40,6 +40,7 @@ class Input_Box extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.05,
                 child: TextField(
                   onChanged: onChange,
+                  keyboardType: TextInputType.number,
                   controller: controller,
                   style: const TextStyle(
                     fontSize: 11.0,
@@ -50,7 +51,7 @@ class Input_Box extends StatelessWidget {
                     filled: true,
                     fillColor: color,
                     contentPadding:
-                         EdgeInsets.fromLTRB(2.0, 0.0, 0.0, 2.0),
+                         EdgeInsets.fromLTRB(2.0, 2.0, 0.0, 2.0),
                     enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Colors.white,
