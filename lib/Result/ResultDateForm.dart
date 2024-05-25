@@ -1,8 +1,15 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, library_private_types_in_public_api, avoid_print
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:n1gaming/API/Result/resultAPI.dart';
+import 'package:n1gaming/Modal/loadingModal.dart';
+import 'package:n1gaming/Provider/ResultProvider.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ResultDateForm extends StatefulWidget {
+  const ResultDateForm({super.key});
+
   @override
   _DateInputFormState createState() => _DateInputFormState();
 }
@@ -11,8 +18,7 @@ class _DateInputFormState extends State<ResultDateForm> {
   final TextEditingController _dateController = TextEditingController();
   DateTime? _selectedDate;
 
-  @override
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate ?? DateTime.now(),
@@ -42,28 +48,34 @@ class _DateInputFormState extends State<ResultDateForm> {
     return localDataList;
   }
 
-  // Future<void> _submitForm(BuildContext context) async {
-  //   if (_selectedDate != null) {
-  //     try {
-  //       final response = await fetchDataForDate(_selectedDate!);
-  //       if (response.containsKey('error')) {
-  //         context.read<ShowResultProvider>().updateResult([]);
-  //       } else {
-  //         List<dynamic> localDataList = response['result'];
-  //         List<dynamic> updatedDataList = convertTimeFormat(localDataList);
-
-  //         context.read<ShowResultProvider>().updateResult(updatedDataList);
-  //       }
-  //     } catch (e) {
-  //       print('Error during API request: $e');
-  //     }
-  //   } else {
-  //     print('No date selected');
-  //   }
-  // }
+  
 
   @override
   Widget build(BuildContext context) {
+
+  Future<void> submitForm(BuildContext context) async {
+    if (_selectedDate != null) {
+      try {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        var token = prefs.getString('token');
+        showLoadingDialog(context);
+        final response = await fetchResult(token!, _selectedDate!);
+        hideLoadingDialog(context);
+        if (response.containsKey('error')) {
+          context.read<ShowResultProvider>().updateResult([]);
+        } else {
+          List<dynamic> localDataList = response['result'];
+          List<dynamic> updatedDataList = convertTimeFormat(localDataList);
+          context.read<ShowResultProvider>().updateResult(updatedDataList);
+        }
+      } catch (e) {
+        print('Failed to fetch data: $e');
+      }
+    } else {
+      print('No date selected');
+    }
+  }
+
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: Column(
@@ -71,7 +83,7 @@ class _DateInputFormState extends State<ResultDateForm> {
           TextFormField(
             controller: _dateController,
             readOnly: true,
-            onTap: () => _selectDate(context),
+            onTap: () => selectDate(context),
             decoration: InputDecoration(
               labelText: 'Select Date',
               labelStyle: TextStyle(color: Colors.white),
@@ -88,8 +100,7 @@ class _DateInputFormState extends State<ResultDateForm> {
           SizedBox(height: MediaQuery.of(context).size.height*0.02),
 
           ElevatedButton(
-            // onPressed: () => _submitForm(context),
-            onPressed: (){},
+            onPressed: () => submitForm(context),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
             ),

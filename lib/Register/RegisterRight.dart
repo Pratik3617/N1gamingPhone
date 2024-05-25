@@ -1,7 +1,14 @@
-// ignore_for_file: prefer_final_fields
+// ignore_for_file: prefer_final_fields, avoid_print, use_build_context_synchronously
+
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:n1gaming/API/SignUp/RegisterAPI.dart';
+import 'package:n1gaming/Modal/ErrorModal.dart';
 import 'package:n1gaming/Login/Login.dart';
+import 'package:n1gaming/Register/OTPVerificationModal.dart';
+import 'package:n1gaming/Modal/loadingModal.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterRightContent extends StatefulWidget {
   const RegisterRightContent({super.key});
@@ -15,6 +22,23 @@ class RegisterRightContentState extends State<RegisterRightContent> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  var error = "";
+
+  Future<int> userRegister() async {
+    var response = await registerUser(_userNameController.text, _emailController.text, _passwordController.text);
+
+    if (response.statusCode == 201) {
+      print('Response: ${response.body}');
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('username', _userNameController.text);
+      await prefs.setInt('walletBalance', 0);
+    } else {
+      final responseBody = jsonDecode(response.body);
+      error = responseBody['message'];
+    }
+
+    return response.statusCode;
+  }
 
   @override
   void dispose() {
@@ -133,15 +157,23 @@ class RegisterRightContentState extends State<RegisterRightContent> {
               ),
               const SizedBox(height: 4),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async{
                   if (_validateInputs()) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      ),
-                    );
+                    showLoadingDialog(context);
+                    int statusCode = await userRegister();
+                    hideLoadingDialog(context);
+                    if(statusCode == 201){
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return OTPVerificationdDialog(email: _emailController.text,);
+                        },
+                      );
+                    }else{
+                      showErrorDialog(context, error);
+                    }
                   }
+                 
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(const Color.fromARGB(255, 30, 58, 58)),

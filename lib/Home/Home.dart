@@ -22,20 +22,19 @@ class HomeWidget extends State<Home> {
   late Timer _timer1;
   late Timer _timer2;
   DateTime _currentTime = DateTime.now();
-  String _remainingTime = "";
+  late int time;
 
   @override
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     _startTimer();
-    // initial();
   }
 
   @override
   void dispose() {
-    _timer1?.cancel();
-    _timer2?.cancel();
+    _timer1.cancel();
+    _timer2.cancel();
     super.dispose();
   }
 
@@ -75,38 +74,30 @@ class HomeWidget extends State<Home> {
           }
           _currentIndex++;
         }
-        if (_currentTime.hour >= 22) {
+        if (_currentTime.hour >= 22 ) {
           _currentIndex = 0;
         }
       });
     });
   }
-
-
   
   String? timeToNextMultipleOf15(DateTime currentTime) {
-    // Check if the current time is within the range of 9:15 AM to 10:15 PM
-    if (currentTime.hour >= 9 && currentTime.hour < 22) {
-      // Calculate minutes and seconds remaining until the next multiple of 15
+    if (((currentTime.hour == 9 && currentTime.minute>=15) || (currentTime.hour >=10) )&& currentTime.hour < 22) {
       int minutes = currentTime.minute;
       int seconds = currentTime.second;
       int minutesUntilNextMultipleOf15 = 14 - (minutes % 15);
       int secondsUntilNextMultipleOf15 = 60 - seconds;
       
-      // Calculate the total time left in seconds
       int totalTimeInSeconds = (minutesUntilNextMultipleOf15 * 60) + secondsUntilNextMultipleOf15;
-      
-      // Convert the total time left to minutes and seconds format
+      time = totalTimeInSeconds;
       int minutesLeft = totalTimeInSeconds ~/ 60;
       int secondsLeft = totalTimeInSeconds % 60;
       
-      // Add padding to minutes and seconds if they are single-digit numbers
       String formattedMinutes = minutesLeft.toString().padLeft(2, '0');
       String formattedSeconds = secondsLeft.toString().padLeft(2, '0');
       
       return '00:$formattedMinutes:$formattedSeconds';
     } else {
-      // If the current time is outside the specified range, return null
       return null;
     }
   }
@@ -123,7 +114,7 @@ class HomeWidget extends State<Home> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 30, 58, 58),
       
-      drawer: const DrawerWidget(),
+      drawer: DrawerWidget(),
 
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -134,7 +125,7 @@ class HomeWidget extends State<Home> {
 
             HomeHeader(nextGame: times[_currentIndex],timeLeft: timeLeft ?? "--:--:--",),
             
-            const SizedBox(height: 2), 
+            const SizedBox(height: 2),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -164,7 +155,7 @@ class HomeWidget extends State<Home> {
               ],
             ),
 
-            const HomeBottom(),
+            HomeBottom(time:time),
             
           ],
         ),

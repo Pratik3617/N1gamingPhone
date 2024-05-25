@@ -1,9 +1,12 @@
-// ignore_for_file: constant_identifier_names
+// ignore_for_file: constant_identifier_names, unused_field
 // import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TimeState {
   bool active;
@@ -22,15 +25,49 @@ class GameSelector with ChangeNotifier {
     });
   }
 
-  // postGameData(dynamic body) async {
-  //   print("call play button");
-  //   var headers = {'Content-Type': 'application/json'};
-  //   body = jsonEncode(body);
-  //   http.Response r = await http.post(Uri.parse("http://3.108.237.235/saveTransaction"),
-  //       headers: headers, body: body);
+  Future<Map<String, dynamic>> postGameData(dynamic body) async {
+    
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString('token');
+      
+      var headers = {
+        'Authorization': 'Token $token',
+        'Content-Type': 'application/json'
+      };
+      
+      String jsonBody = jsonEncode(body);
 
-  //   return r.statusCode;
-  // }
+      http.Response response = await http.post(
+        Uri.parse("https://n1gaming-backend-app.onrender.com/transaction/"),
+        headers: headers,
+        body: jsonBody
+      );
+      final responseBody = jsonDecode(response.body);
+      print(responseBody);
+
+      return {
+        'statusCode': response.statusCode,
+        'message': responseBody['message']
+      };
+
+    } catch (e) {
+      String errorMessage;
+      if (e is http.ClientException) {
+        errorMessage = "ClientException: ${e.message}";
+      } else if (e is FormatException) {
+        errorMessage = "FormatException: ${e.message}";
+      } else {
+        errorMessage = "Unexpected error: $e";
+      }
+
+
+      return {
+        'statusCode': -1, // Or any other code to indicate an error
+        'message': errorMessage
+      };
+    }
+  }
 
   setTimeCheckBoxesState() async {
     DateTime now = DateTime.now();
@@ -276,10 +313,6 @@ class GameSelector with ChangeNotifier {
     controllers[r3][r4].text = v;
     controllers[r5][r6].text = v;
     controllers[r7][r8].text = v;
-    // controllers[randomIndex1][randomIndex2].text = v;
-    // controllers[randomIndex1][calculatedR2].text = v;
-    // controllers[calculatedR1][randomIndex2].text = v;
-    // controllers[calculatedR1][calculatedR2].text = v;
   }
 
   List<List<List<String?>>> matrixList = List.generate(
@@ -664,10 +697,12 @@ void resetMatrixData() {
     notifyListeners();
   }
 
+
   void resetCheckBox(){
     atIsChecked = false;
     ajIsChecked = false;
     ktIsChecked = false;
+    lpController.text="";
     notifyListeners();
   }
 

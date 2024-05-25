@@ -1,7 +1,11 @@
-// ignore_for_file: prefer_final_fields, library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:n1gaming/API/Login/forgotPasswordAPI.dart';
+import 'package:n1gaming/Modal/ErrorModal.dart';
 import 'package:n1gaming/Login/OTPmodal.dart';
+import 'package:n1gaming/Modal/loadingModal.dart';
 
 class ForgotPasswordDialog extends StatefulWidget {
   const ForgotPasswordDialog({super.key});
@@ -11,14 +15,27 @@ class ForgotPasswordDialog extends StatefulWidget {
 }
 
 class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
-  TextEditingController _emailController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  String resetError = "";
+
+  Future<int> resetPassword() async {
+    var response = await forgotPassword(_emailController.text);
+    var responseBody = json.decode(response.body);
+    print("response body: ${response.statusCode}");
+    if (response.statusCode == 200) {
+    } else {
+      resetError = "Email Id not is not Registered!!!";
+    }
+    return response.statusCode;
+  }
 
   @override
   void dispose() {
     _emailController.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -69,17 +86,25 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
       ),
       actions: <Widget>[
         TextButton(
-          onPressed: () {
+          onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              Navigator.of(context).pop();
-              showDialog(context: context, 
-                builder: (BuildContext context) {
-                  return OTPmodal(email: _emailController.text,);
-                }
-              );
+              showLoadingDialog(context); // Show loading dialog
+              int statusCode = await resetPassword();
+              hideLoadingDialog(context); // Hide loading dialog
+              print(statusCode);
+              if (statusCode == 200) {
+                Navigator.of(context).pop();
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return OTPmodal(email: _emailController.text);
+                  },
+                );
+              } else {
+                Navigator.of(context).pop();
+                showErrorDialog(context, resetError);
+              }
             }
-            
-            // Perform password reset functionality here
           },
           child: const Text(
             'Send OTP',

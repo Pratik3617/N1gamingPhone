@@ -1,6 +1,14 @@
-// ignore_for_file: prefer_final_fields
+// ignore_for_file: prefer_final_fields, use_build_context_synchronously
+
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:n1gaming/API/Home/changePasswordAPI.dart';
+import 'package:n1gaming/Login/Login.dart';
+import 'package:n1gaming/Modal/ErrorModal.dart';
+import 'package:n1gaming/Modal/loadingModal.dart';
+import 'package:n1gaming/Modal/successModal.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChangePassModal extends StatefulWidget {
   const ChangePassModal({super.key});
@@ -14,6 +22,36 @@ class ChangePassModalState extends State<ChangePassModal> {
   TextEditingController _newPassword = TextEditingController();
   TextEditingController _confirmPassword = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  String? token;
+  String message= "";
+
+  void getToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+    });
+  }
+
+  Future<int> changeUserPassword() async{
+    var response = await changePassword(_currentPassword.text,_newPassword.text,token!);
+    var responseBody = json.decode(response.body);
+    if (response.statusCode == 200) {
+      message = responseBody['message'];
+    } else {
+      message = responseBody['message'];
+    }
+    _currentPassword.text="";
+    _newPassword.text="";
+    _confirmPassword.text="";
+    
+    return response.statusCode;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getToken();
+  }
 
   @override
   void dispose() {
@@ -74,8 +112,8 @@ class ChangePassModalState extends State<ChangePassModal> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter a password';
-                        } else if (value.length < 6) {
-                          return 'Password must be at least 6 characters long';
+                        } else if (value.length < 8) {
+                          return 'Password must be at least 8 characters long';
                         }
                         return null;
                       },
@@ -99,20 +137,41 @@ class ChangePassModalState extends State<ChangePassModal> {
                   ],
                 ),
               ),
-              const SizedBox(height: 5),
+              const SizedBox(height: 12),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Navigator.of(context).pop();
+                onPressed: () async{
+                  if(_formKey.currentState!.validate()) {
+                    showLoadingDialog(context);
+                    int statusCode = await changeUserPassword();
+                    hideLoadingDialog(context);
+                    if(statusCode == 200){
+                      Navigator.of(context).pop();
+                      showSuccessDialog(context, message);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      );
+                    }else{
+                      Navigator.of(context).pop();
+                      showErrorDialog(context, message);
+                    }
                   }
                 },
+                style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color.fromARGB(255, 30, 58, 58)),
+                    ),
+                
                 child: const Text(
-                  'Change Password',
+                  'SUBMIT',
                   style: TextStyle(
-                    fontFamily: "SansSerif",
+                    fontFamily: "YoungSerif",
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 30, 58, 58),
+                    color: Colors.white,
+                    letterSpacing: 1
                   ),
                 ),
               ),

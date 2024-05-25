@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,29 +7,42 @@ import 'package:n1gaming/Home/BottomInput.dart';
 import 'package:n1gaming/Home/CheckBox.dart';
 import 'package:n1gaming/Home/CheckButton.dart';
 import 'package:n1gaming/Home/CustomButton.dart';
+import 'package:n1gaming/Home/printDialog.dart';
 import 'package:n1gaming/Provider/GameSelector.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeBottom extends StatefulWidget {
-
-  const HomeBottom({super.key});
+  final int time;
+  const HomeBottom({
+    super.key,
+    required this.time
+  });
 
   @override
   _HomeBottomState createState() => _HomeBottomState();
 }
 
 class _HomeBottomState extends State<HomeBottom> {
+  String? username;
+
+  void getUsername() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = prefs.getString('username');
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    getUsername();
   }
 
   @override
   void dispose() {
     super.dispose();
   }
-
 
   void _showModal(BuildContext context) {
     
@@ -207,15 +220,17 @@ class _HomeBottomState extends State<HomeBottom> {
     );
   }
 
+  
+
   void _showTimeSlotModal(BuildContext context,String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
-          content: Container(
-            width: 500.0,
-            height: 50.0,
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width*0.6,
+            height: MediaQuery.of(context).size.height*0.3,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,14 +249,6 @@ class _HomeBottomState extends State<HomeBottom> {
               ],
             ),
           ),
-          // actions: [
-          //   TextButton(
-          //     onPressed: () {
-          //       Navigator.of(context).pop();
-          //     },
-          //     child: const Text('Close'),
-          //   ),
-          // ],
         );
       },
     );
@@ -298,11 +305,11 @@ class _HomeBottomState extends State<HomeBottom> {
                 select: select,
                 text: "RESET ALL",
                 function: () {
+                  select.resetMatrixData();
                   select.resetRowColumnsControllers();
                   select.resetControllers();
                   select.resetTimes();
                   select.resetCheckBox();
-                  select.resetMatrixData();
                 },
                 visible: true,
                 color: Colors.white,
@@ -364,23 +371,44 @@ class _HomeBottomState extends State<HomeBottom> {
                           }
                         }
                       }
+                      
 
                     String slipDate = DateFormat('dd/MM/yyyy HH:MM:ss')
                       .format(DateTime.now());
 
                     final body = {
-                      "username": "Prateek",
                       "transaction_id": txnId,
                       "gamedate_times": selectedTimes.split(",").map((time) => time.trim()).where((time) => time.isNotEmpty).toList(),
                       "slipdate_time": slipDate,
                       "points": (totalPoints).toString(),
-                      "GamePlay": selectedCharacters
+                      "GamePlay": selectedCharacters,
+                      "total_amount": totalPoints*countTimeSlots
                     };
-                    print(body);
-                  }else if(selectedCharacters.isEmpty){
-                    _showTimeSlotModal(context,"Please select games!!!");
+                    
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return buildPrintDialog(
+                          context: context,
+                          userName: username!,
+                          txnId: txnId,
+                          slipDate: slipDate,
+                          selectedTimes: selectedTimes,
+                          selectedCharacters: selectedCharacters,
+                          totalPoints: totalPoints,
+                          countTimeSlots: countTimeSlots,
+                          body: body,
+                          time: widget.time
+                        );
+                      },
+                    );
+
                   }else{
-                    _showTimeSlotModal(context,"Please select Time slots!!!");
+                    if(select.grandTotal==0){
+                      _showTimeSlotModal(context,"Please add tickets!!!");
+                    }else{
+                      _showTimeSlotModal(context,"Please select time slots!!!");
+                    }
                   }
                       
                 },
@@ -389,7 +417,7 @@ class _HomeBottomState extends State<HomeBottom> {
                 textcolor: Colors.white,
               ),
               BottomInput(grandTotal: select.grandTotal, text: "Grand Total"),
-              BottomInput(grandTotal: select.grandTotal, text: "Net Total"),
+              BottomInput(grandTotal: select.grandTotal*countTimeSlots, text: "Net Total"),
             ],
           ),
         );
