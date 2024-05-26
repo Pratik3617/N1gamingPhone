@@ -1,14 +1,18 @@
-// ignore_for_file: use_super_parameters, prefer_const_constructors_in_immutables, use_build_context_synchronously
+// ignore_for_file: use_super_parameters, prefer_const_constructors_in_immutables, use_build_context_synchronously, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:n1gaming/API/Home/showTransactionAPI.dart';
+import 'package:n1gaming/API/Login/getWalletAPI.dart';
 import 'package:n1gaming/API/Result/resultAPI.dart';
 import 'package:n1gaming/Modal/ChangePassword.dart';
 import 'package:n1gaming/Modal/addBankDetails.dart';
+import 'package:n1gaming/Modal/loadingModal.dart';
 import 'package:n1gaming/Modal/paymentSubmission.dart';
 import 'package:n1gaming/Modal/withdrawMoney.dart';
 import 'package:n1gaming/Login/Login.dart';
 import 'package:n1gaming/Provider/ResultProvider.dart';
+import 'package:n1gaming/Provider/TransactionProvider.dart';
 import 'package:n1gaming/Result/Result.dart';
 import 'package:n1gaming/Transaction/Transaction.dart';
 import 'package:provider/provider.dart';
@@ -93,14 +97,22 @@ class DrawerWidgetState extends State<DrawerWidget> {
       } catch (e) {
         print('Failed to fetch data: $e');
       }
-  
+  }
+
+  Future<void> getUserBalance() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    showLoadingDialog(context);
+    await fetchBalance(token!);
+    getBalance();
+    hideLoadingDialog(context);
   }
 
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.33,
+      width: MediaQuery.of(context).size.width * 0.36,
       
       child: Drawer(
         child: Column(
@@ -129,7 +141,7 @@ class DrawerWidgetState extends State<DrawerWidget> {
                       color: Color.fromARGB(255, 30, 58, 58), // Icon color
                     ),
                     title: Text(
-                      'Wallet Balance: $balance',
+                      'Wallet Balance: $balance ₹',
                       style: const TextStyle(
                         fontFamily: 'SansSerif',
                         fontSize: 16.0,
@@ -138,6 +150,9 @@ class DrawerWidgetState extends State<DrawerWidget> {
                         color: Color.fromARGB(255, 30, 58, 58),
                       ),
                     ),
+                    onTap: () async{
+                      await getUserBalance();
+                    },
                   ),
 
                   ListTile(
@@ -155,7 +170,15 @@ class DrawerWidgetState extends State<DrawerWidget> {
                         color: Color.fromARGB(255, 30, 58, 58),
                       ),
                     ),
-                    onTap: () {
+                    onTap: () async{
+                      showLoadingDialog(context);
+
+                      final SharedPreferences prefs = await SharedPreferences.getInstance();
+                      var token = prefs.getString('token');
+                      TransactionProvider transactionProvider = Provider.of<TransactionProvider>(context, listen: false);
+                      await fetchTransactionAPI(token!, transactionProvider);
+                      hideLoadingDialog(context);
+                      
                       Navigator.push(
                         context,
                         MaterialPageRoute(

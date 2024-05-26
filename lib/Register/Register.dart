@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:n1gaming/Login/LoginLeft.dart';
-import 'package:n1gaming/Login/LoginRight.dart';
 import 'package:n1gaming/Register/RegisterLeft.dart';
 import 'package:n1gaming/Register/RegisterRight.dart';
 

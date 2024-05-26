@@ -4,10 +4,11 @@ import 'package:n1gaming/Provider/TransactionProvider.dart';
 import 'package:provider/provider.dart';
 
 class Transaction extends StatelessWidget {
+  const Transaction({super.key});
+
   @override
   Widget build(BuildContext context) {
 
-    int cancelCount = Provider.of<TransactionProvider>(context).cancelCount;
 
     return Consumer<TransactionProvider>(
       builder: (context, transactionProvider, child) {
@@ -18,7 +19,7 @@ class Transaction extends StatelessWidget {
             List<DataCell> cells = [];
 
             if (i == 0) {
-              cells.add(DataCell(Text(transactionId, style: const TextStyle(color: Colors.white))));
+              cells.add(DataCell(Text(transactionId, style: const TextStyle(color: Colors.white, fontSize: 11))));
             } else {
               cells.add(DataCell(const Text('')));
             }
@@ -26,7 +27,7 @@ class Transaction extends StatelessWidget {
             for (int j = 0; j < rowList[i].length; j++) {
               cells.add(
                 DataCell(
-                  Text(rowList[i][j], style: const TextStyle(color: Colors.white)),
+                  Text(rowList[i][j], style: const TextStyle(color: Colors.white,fontSize: 11)),
                 ),
               );
             }
@@ -82,20 +83,12 @@ class Transaction extends StatelessWidget {
                             margin: const EdgeInsets.fromLTRB(0, 20, 20, 15),
                             child: const Text("Click on TSN for Details", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                           ),
-                          Container(
-                            margin: const EdgeInsets.fromLTRB(0, 20, 0, 15),
-                            child: const Text("Slips Cancelled: ", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.fromLTRB(0, 20, 0, 15),
-                            child: Text("$cancelCount", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                          )
                         ],
                       ),
                       SingleChildScrollView(
                         scrollDirection: Axis.vertical,
                         child: DataTable(
-                          columnSpacing: MediaQuery.of(context).size.height*0.1,
+                          columnSpacing: MediaQuery.of(context).size.height*0.05,
                           columns: const <DataColumn>[
                             DataColumn(
                               label: Text('Transaction ID', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
@@ -116,7 +109,7 @@ class Transaction extends StatelessWidget {
                               label: Text('Points', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
                             ),
                             DataColumn(
-                              label: Text('Cancel', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+                              label: Text('Status', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
                             ),
                           ],
                           rows: rows,

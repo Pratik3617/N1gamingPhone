@@ -69,6 +69,17 @@ class PaymentSubmissionFormState extends State<PaymentSubmissionForm> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const Center(
+              child: Text("PAYMENT",
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 30, 58, 58),
+                  letterSpacing: 1
+                ),
+              ),
+            ),
             Form(
               key: _formKey,
               child: Column(

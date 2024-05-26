@@ -1,10 +1,12 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, must_be_immutable
 import 'package:flutter/material.dart';
 import 'package:n1gaming/Provider/ResultProvider.dart';
 import 'package:provider/provider.dart';
 
 class ResultRight extends StatelessWidget {
   List<String> listAlpha = ["Time", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"];
+
+  ResultRight({super.key});
 
   // Static data to use instead of provider
   
