@@ -24,8 +24,9 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
     var responseBody = json.decode(response.body);
     print("response body: ${response.statusCode}");
     if (response.statusCode == 200) {
+      resetError = responseBody['message'];
     } else {
-      resetError = "Email Id not is not Registered!!!";
+      resetError = responseBody['message'];
     }
     return response.statusCode;
   }

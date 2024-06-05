@@ -12,6 +12,9 @@ import 'splashScreen.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized(); 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent
+  ));
   
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,

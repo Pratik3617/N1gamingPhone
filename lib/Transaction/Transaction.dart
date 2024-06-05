@@ -1,15 +1,33 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:n1gaming/Modal/ErrorModal.dart';
+import 'package:n1gaming/Modal/loadingModal.dart';
+import 'package:n1gaming/Modal/tsnDetailsModal.dart';
 import 'package:n1gaming/Provider/TransactionProvider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class Transaction extends StatelessWidget {
   const Transaction({super.key});
 
+  Future<http.Response> _showDetailsDialog(String tsnId, String token) async {
+    final url = 'https://n1gaming-backend-app.onrender.com/get-usergame?tsn_id=$tsnId'; 
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Token $token',
+      },
+    );
+
+    return response;
+  }
+
   @override
   Widget build(BuildContext context) {
-
-
     return Consumer<TransactionProvider>(
       builder: (context, transactionProvider, child) {
         List<DataRow> rows = [];
@@ -25,11 +43,45 @@ class Transaction extends StatelessWidget {
             }
 
             for (int j = 0; j < rowList[i].length; j++) {
-              cells.add(
-                DataCell(
-                  Text(rowList[i][j], style: const TextStyle(color: Colors.white,fontSize: 11)),
-                ),
-              );
+              if (j == 0) {
+                cells.add(
+                  DataCell(
+                    GestureDetector(
+                      onTap: () async{
+                        final SharedPreferences prefs = await SharedPreferences.getInstance();
+                        var token = prefs.getString('token');
+                        showLoadingDialog(context);
+                        var response = await _showDetailsDialog(rowList[i][j],token!);
+                        var responseBody = json.decode(response.body);
+                        
+                        final userGameList = responseBody['usergame'];
+                        final formattedDetails = userGameList.map((game) {
+                          return '${game['game_name']}-${game['number']}-${game['Playedpoints']}';
+                        }).join(', ');
+                        print(formattedDetails);
+                        hideLoadingDialog(context);
+                        if(response.statusCode==200){
+                          
+                          tsnDetailsDialog(context, formattedDetails,rowList[i][j]);
+                        }else{
+                          final message = responseBody['message'];
+                          showErrorDialog(context, message);
+                        }
+                      },
+                      child: Text(
+                        rowList[i][j],
+                        style: const TextStyle(color: Colors.white, fontSize: 11),
+                      ),
+                    ),
+                  ),
+                );
+              } else {
+                cells.add(
+                  DataCell(
+                    Text(rowList[i][j], style: const TextStyle(color: Colors.white, fontSize: 11)),
+                  ),
+                );
+              }
             }
 
             while (cells.length < 7) {

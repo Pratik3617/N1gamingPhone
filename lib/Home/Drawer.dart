@@ -1,14 +1,19 @@
 // ignore_for_file: use_super_parameters, prefer_const_constructors_in_immutables, use_build_context_synchronously, non_constant_identifier_names
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:n1gaming/API/Home/getQR.dart';
 import 'package:n1gaming/API/Home/showTransactionAPI.dart';
 import 'package:n1gaming/API/Login/getWalletAPI.dart';
 import 'package:n1gaming/API/Result/resultAPI.dart';
 import 'package:n1gaming/Modal/ChangePassword.dart';
+import 'package:n1gaming/Modal/ErrorModal.dart';
 import 'package:n1gaming/Modal/addBankDetails.dart';
 import 'package:n1gaming/Modal/loadingModal.dart';
 import 'package:n1gaming/Modal/paymentSubmission.dart';
+import 'package:n1gaming/Modal/qrImage.dart';
 import 'package:n1gaming/Modal/withdrawMoney.dart';
 import 'package:n1gaming/Login/Login.dart';
 import 'package:n1gaming/Provider/ResultProvider.dart';
@@ -27,6 +32,9 @@ class DrawerWidget extends StatefulWidget {
 class DrawerWidgetState extends State<DrawerWidget> {
   String? username;
   int? balance;
+  String qrMessage = "";
+  String path="";
+  String upi="";
 
   @override
   void initState() {
@@ -108,6 +116,21 @@ class DrawerWidgetState extends State<DrawerWidget> {
     hideLoadingDialog(context);
   }
 
+  Future<int> getQRDetails() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var response = await getQR(token!);
+    var responseBody = json.decode(response.body);
+    print(responseBody);
+    if (response.statusCode == 200) {
+      path = responseBody['image'];
+      upi = responseBody['upi_id'];
+    }else{
+      qrMessage = responseBody['message'];
+    }
+    return response.statusCode;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +205,7 @@ class DrawerWidgetState extends State<DrawerWidget> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Transaction(),
+                          builder: (context) => const Transaction(),
                         ),
                       );
                     },
@@ -210,6 +233,32 @@ class DrawerWidgetState extends State<DrawerWidget> {
                           builder: (context) => Result(),
                         ),
                       );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.qr_code, // Choose your desired icon
+                      color: Color.fromARGB(255, 30, 58, 58), // Icon color
+                    ),
+                    title: const Text(
+                      'QR',
+                      style: TextStyle(
+                        fontFamily: 'SansSerif',
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                        color: Color.fromARGB(255, 30, 58, 58),
+                      ),
+                    ),
+                    onTap: () async{
+                      showLoadingDialog(context);
+                      int statusCode = await getQRDetails();
+                      hideLoadingDialog(context);
+                      if(statusCode==200){
+                        qrDialog(context, "https://n1gaming-backend-app.onrender.com$path", upi);
+                      }else{
+                        showErrorDialog(context, qrMessage);
+                      }
                     },
                   ),
                   ListTile(

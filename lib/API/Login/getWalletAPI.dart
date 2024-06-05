@@ -22,7 +22,7 @@ Future<void> fetchBalance(String token) async {
       await prefs.setInt('balance', data['balance']);
       
     } else {
-      throw Exception('Failed to get username!!!');
+      throw Exception('Failed to get balance!!!');
     }
 
 }

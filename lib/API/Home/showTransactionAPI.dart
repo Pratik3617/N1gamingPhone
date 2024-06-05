@@ -20,12 +20,11 @@ Future<void> fetchTransactionAPI(String token, TransactionProvider transactionPr
     
     final Map<String, dynamic> responseData = json.decode(response.body);
     Map<String, List<List<String>>> transactionData = {};
-    int cancelCount = 0;
 
     if (responseData.containsKey('transactionList')) {
       List<dynamic> transactions = responseData['transactionList'];
 
-      transactions.forEach((transaction) {
+      for (var transaction in transactions) {
         if (transaction.containsKey('transaction_id') && transaction.containsKey('tsns')) {
           String transactionId = transaction['transaction_id'];
           List<dynamic> tsns = transaction['tsns'];
@@ -43,16 +42,16 @@ Future<void> fetchTransactionAPI(String token, TransactionProvider transactionPr
                     tsn['gamedate_time'],
                     tsn['slipdatetime'],
                     tsn['playedpoints'].toString(),
-                    tsn['status'].toString(),
+                    tsn['winning'].toString(),
                   ]);
                 }
           }
 
           transactionData[transactionId] = tsnsData;
         }
-      });
+      }
 
-      transactionProvider.updateTransactionData(transactionData, cancelCount);
+      transactionProvider.updateTransactionData(transactionData);
     }
   } else {
     print('Error: ${response.statusCode}, ${response.reasonPhrase}');

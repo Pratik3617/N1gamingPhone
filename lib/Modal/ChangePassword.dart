@@ -144,8 +144,8 @@ class ChangePassModalState extends State<ChangePassModal> {
                     showLoadingDialog(context);
                     int statusCode = await changeUserPassword();
                     hideLoadingDialog(context);
-                    if(statusCode == 200){
-                      Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                    if(statusCode == 200){                   
                       showSuccessDialog(context, message);
                       Navigator.push(
                         context,
