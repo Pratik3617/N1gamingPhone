@@ -16,8 +16,8 @@ import Flutter
     return .landscape
   }
 
-  // Override the preferredStatusBarHidden property to hide the status bar
-  override var prefersStatusBarHidden: Bool {
-    return true
-  }
+  // // Override the preferredStatusBarHidden property to hide the status bar
+  // override var prefersStatusBarHidden: Bool {
+  //   return true
+  // }
 }
