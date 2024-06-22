@@ -6,53 +6,70 @@ void qrDialog(BuildContext context, String imagePath, String upi) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        content: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.9,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Image.network(
-                imagePath,
-                width: 180,
-                height: 180,
-                fit: BoxFit.contain,
-                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                  return const Text(
-                    'Failed to load image',
-                    style: TextStyle(color: Colors.red),
-                  );
-                },
-              ),
-              const SizedBox(height: 5),
-              Text(
-                upi,
-                style: const TextStyle(
-                  fontFamily: 'SansSerif',
-                  fontSize: 16.0,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const PaymentSubmissionForm();
-                    },
-                  );
-                },
-                child: const Text(
-                  'Payment Form',
+        content: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.8,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  "Use the QR or UPI for payment, then submit the form given below!",
                   style: TextStyle(
-                    fontFamily: "SansSerif",
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 30, 58, 58),
+                    fontFamily: 'YoungSerif',
+                    fontSize: 16.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 0),
+                  child: Image.network(
+                    imagePath,
+                    width: 220,
+                    height: 220,
+                    fit: BoxFit.contain,
+                    errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                      return const Text(
+                        'Failed to load image',
+                        style: TextStyle(color: Colors.red),
+                      );
+                    },
                   ),
                 ),
-              ),
-            ],
+                Text(
+                  upi,
+                  style: const TextStyle(
+                    fontFamily: 'SansSerif',
+                    fontSize: 16.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const PaymentSubmissionForm();
+                      },
+                    );
+                  },
+                  child: const Text(
+                    'Payment Submission Form',
+                    style: TextStyle(
+                      fontFamily: "SansSerif",
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromARGB(255, 30, 58, 58),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );

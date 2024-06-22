@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:n1gaming/API/Account/accountHistoryApi.dart';
 import 'package:n1gaming/API/Home/getQR.dart';
 import 'package:n1gaming/API/Home/showTransactionAPI.dart';
 import 'package:n1gaming/API/Login/getWalletAPI.dart';
@@ -13,7 +12,6 @@ import 'package:n1gaming/Modal/ChangePassword.dart';
 import 'package:n1gaming/Modal/ErrorModal.dart';
 import 'package:n1gaming/Modal/addBankDetails.dart';
 import 'package:n1gaming/Modal/loadingModal.dart';
-import 'package:n1gaming/Modal/paymentSubmission.dart';
 import 'package:n1gaming/Modal/qrImage.dart';
 import 'package:n1gaming/Modal/withdrawMoney.dart';
 import 'package:n1gaming/Login/Login.dart';

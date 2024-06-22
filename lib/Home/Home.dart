@@ -24,8 +24,6 @@ class HomeWidget extends State<Home> {
   late Timer _timer1;
   late Timer _timer2;
   DateTime _currentTime = DateTime.now();
-  // late int time;
-
 
 
 

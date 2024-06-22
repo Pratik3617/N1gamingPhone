@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:n1gaming/Connectivity/controller.dart';
 import 'package:n1gaming/Provider/GameSelector.dart';
 import 'package:n1gaming/Provider/ResultProvider.dart';
 import 'package:n1gaming/Provider/TransactionProvider.dart';
@@ -41,6 +43,8 @@ void main() {
       child: const MyApp(),
     ),
   );
+
+  Get.put(InternetController(),permanent: true);
 }
 
 class MyApp extends StatelessWidget {
@@ -48,7 +52,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
       routes: {
