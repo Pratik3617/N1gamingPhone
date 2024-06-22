@@ -157,6 +157,7 @@ class PaymentSubmissionFormState extends State<PaymentSubmissionForm> {
                         labelText: 'Transaction ID',
                         contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 1),
                         isDense: true,
+                        suffixIcon: Icon(Icons.perm_identity)
                       ),
                       validator: _validateTransactionId,
                     ),
@@ -171,6 +172,7 @@ class PaymentSubmissionFormState extends State<PaymentSubmissionForm> {
                         labelText: 'Amount',
                         contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 1),
                         isDense: true,
+                        suffixIcon: Icon(Icons.currency_rupee)
                       ),
                       validator: _validateTransactionId,
                     ),

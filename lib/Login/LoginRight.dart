@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:n1gaming/Login/ForgotPassModal.dart';
+import 'package:n1gaming/Modal/notVerifiedUser.dart';
+import 'package:n1gaming/Register/OTPVerificationModal.dart';
 import 'package:n1gaming/Register/Register.dart';
 import 'package:n1gaming/Modal/loadingModal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -158,7 +160,7 @@ class _RightContentState extends State<RightContent> {
                         showLoadingDialog(context);
                         int statusCode = await userLogin();
                         hideLoadingDialog(context);
-                        // print(statusCode);
+                        print(statusCode);
                         if (statusCode == 200) {
                           Navigator.pushReplacement(
                             context,
@@ -166,7 +168,9 @@ class _RightContentState extends State<RightContent> {
                               builder: (context) => Home(),
                             ),
                           );
-                        } else {
+                        }else if(statusCode == 400){
+                          userNotVerified(context, "User already registered with given mail id!!! Please complete email verification.", _emailController.text);
+                        }else{
                           showErrorDialog(context, loginError);
                         }
                       }

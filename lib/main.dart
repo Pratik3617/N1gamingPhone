@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:n1gaming/Provider/GameSelector.dart';
 import 'package:n1gaming/Provider/ResultProvider.dart';
 import 'package:n1gaming/Provider/TransactionProvider.dart';
+import 'package:n1gaming/Provider/accountsProvider.dart';
 import 'package:n1gaming/Result/Result.dart';
 import 'package:provider/provider.dart';
 
@@ -32,6 +33,9 @@ void main() {
         ),
         ChangeNotifierProvider(
           create: (context) => TransactionProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AccountHistoryProvider(),
         ),
       ],
       child: const MyApp(),

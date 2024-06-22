@@ -19,7 +19,10 @@ class LoginPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Left Content - App Name
-                LeftContent(),
+                PopScope(
+                  canPop: false,
+                  child: LeftContent(),
+                ),
                 // Right Content - Login Form
                 RightContent(),
               ],

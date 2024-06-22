@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:n1gaming/Home/BottomButton.dart';
@@ -11,7 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeBottom extends StatefulWidget {
-  const HomeBottom({Key? key}) : super(key: key);
+  const HomeBottom({
+    super.key,
+  });
 
   @override
   _HomeBottomState createState() => _HomeBottomState();
@@ -40,6 +44,7 @@ class _HomeBottomState extends State<HomeBottom> {
   }
 
   void _showModal(BuildContext context) {
+    
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -51,7 +56,7 @@ class _HomeBottomState extends State<HomeBottom> {
           child: Container(
             width: MediaQuery.of(context).size.width * 0.9,
             height: MediaQuery.of(context).size.height * 0.9,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
             child: SingleChildScrollView(
               child: Consumer<GameSelector>(
                 builder: (context, value, child) {
@@ -121,9 +126,6 @@ class _HomeBottomState extends State<HomeBottom> {
                                   value.timesValues[element]!.selected = v;
                                 }
                               }
-                              setState(() {
-                                countTimeSlots = _calculateTimeSlots(value);
-                              });
                             },
                           ),
                         ],
@@ -146,9 +148,6 @@ class _HomeBottomState extends State<HomeBottom> {
                                 value.timesValues[element]!.selected = false;
                               }
                               value.notifyListeners();
-                              setState(() {
-                                countTimeSlots = 0;
-                              });
                             },
                           ),
                           CustomButton(
@@ -164,6 +163,7 @@ class _HomeBottomState extends State<HomeBottom> {
                               Navigator.of(context).pop();
                             },
                           ),
+
                           CustomButton(
                             width: MediaQuery.of(context).size.width * 0.2,
                             height: MediaQuery.of(context).size.height * 0.08,
@@ -216,9 +216,6 @@ class _HomeBottomState extends State<HomeBottom> {
                                     value.showNextDayTimes ? tomorrowTime : now)) {
                                   value.timesValues[value.times[i]]!.selected = v!;
                                   value.notifyListeners();
-                                  setState(() {
-                                    countTimeSlots = _calculateTimeSlots(value);
-                                  });
                                 }
                               },
                             ),
@@ -236,36 +233,29 @@ class _HomeBottomState extends State<HomeBottom> {
     );
   }
 
-  int _calculateTimeSlots(GameSelector value) {
-    int count = 0;
-    value.timesValues.forEach((key, value) {
-      if (value.selected == true) {
-        count++;
-      }
-    });
-    return count;
-  }
+  
 
-  void _showTimeSlotModal(BuildContext context, String message) {
+  void _showTimeSlotModal(BuildContext context,String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.white,
           content: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.6,
-            height: MediaQuery.of(context).size.height * 0.3,
+            width: MediaQuery.of(context).size.width*0.6,
+            height: MediaQuery.of(context).size.height*0.3,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                
                 Center(
                   child: Text(
                     message,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 22.0,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.bold
                     ),
                   ),
                 )
@@ -277,8 +267,11 @@ class _HomeBottomState extends State<HomeBottom> {
     );
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+
     String txnId = "TXN${DateTime.now().millisecondsSinceEpoch}";
     List<String> selectedCharacters = [];
     String selectedTimes = "";
@@ -287,6 +280,7 @@ class _HomeBottomState extends State<HomeBottom> {
     String formattedDate = DateFormat('dd/MM/yyyy').format(now);
     String nextDayDate =
         DateFormat('dd/MM/yyyy').format(now.add(const Duration(days: 1)));
+
 
     return Consumer<GameSelector>(
       builder: (context, select, _) {
@@ -328,7 +322,7 @@ class _HomeBottomState extends State<HomeBottom> {
                   select.resetTimes();
                   select.resetCheckBox();
                   setState(() {
-                    countTimeSlots = 0; // Reset countTimeSlots as well
+                    countTimeSlots = 0;
                   });
                 },
                 visible: true,
@@ -343,7 +337,6 @@ class _HomeBottomState extends State<HomeBottom> {
                     countTimeSlots = 0;
                     selectedTimes = "";
                   });
-
                   select.timesValues.forEach((key, value) {
                     if (value.selected == true) {
                       countTimeSlots += 1;
@@ -351,68 +344,65 @@ class _HomeBottomState extends State<HomeBottom> {
                           "${select.showNextDayTimes ? nextDayDate : formattedDate} $key,";
                     }
                   });
-
-                  if (countTimeSlots != 0) {
-                    selectedCharacters.clear();
-                    final select3 =
-                        Provider.of<GameSelector>(context, listen: false);
-                    for (int i = 0; i < 10; i++) {
-                      for (int j = 0; j < 10; j++) {
-                        String? textValue = select3.controllers[i][j].text;
-                        if (select3.activeMatrix.length == 1) {
-                          select3.matrixList[select3.checkbox
-                                  .indexOf(select3.activeMatrix)][i][j] =
-                              textValue != "" ? textValue : "";
-                        } else if (select3.activeMatrix == "AT") {
-                          for (int k = 0; k < 20; k++) {
-                            select3.matrixList[k][i][j] =
+                  
+                  if(countTimeSlots!=0){
+                      selectedCharacters.clear();
+                      final select3 =
+                          Provider.of<GameSelector>(context, listen: false);
+                      for (int i = 0; i < 10; i++) {
+                        for (int j = 0; j < 10; j++) {
+                          String? textValue = select3.controllers[i][j].text;
+                          if (select3.activeMatrix.length == 1) {
+                            select3.matrixList[select3.checkbox
+                                    .indexOf(select3.activeMatrix)][i][j] =
                                 textValue != "" ? textValue : "";
+                          } else if (select3.activeMatrix == "AT") {
+                            for (int k = 0; k < 20; k++) {
+                              select3.matrixList[k][i][j] =
+                                  textValue != "" ? textValue : "";
+                            }
+                          } else if (select3.activeMatrix == "AJ") {
+                            for (int k = 0; k < 10; k++) {
+                              select3.matrixList[k][i][j] =
+                                  textValue != "" ? textValue : "";
+                            }
+                          } else if (select3.activeMatrix == "KT") {
+                            for (int k = 10; k < 20; k++) {
+                              select3.matrixList[k][i][j] =
+                                  textValue != "" ? textValue : "";
+                            }
                           }
-                        } else if (select3.activeMatrix == "AJ") {
+                        }
+                      }
+
+                      for (int i = 0; i < 20; i++) {
+                        for (int j = 0; j < 10; j++) {
                           for (int k = 0; k < 10; k++) {
-                            select3.matrixList[k][i][j] =
-                                textValue != "" ? textValue : "";
-                          }
-                        } else if (select3.activeMatrix == "KT") {
-                          for (int k = 10; k < 20; k++) {
-                            select3.matrixList[k][i][j] =
-                                textValue != "" ? textValue : "";
-                          }
-                        }
-                      }
-                    }
-
-                    for (int i = 0; i < 20; i++) {
-                      for (int j = 0; j < 10; j++) {
-                        for (int k = 0; k < 10; k++) {
-                          if (select3.matrixList[i][j][k] != "" &&
-                              select3.matrixList[i][j][k] != "0") {
-                            selectedCharacters.add(
-                                "${select3.checkbox[i]}-$j$k - ${int.parse(select3.matrixList[i][j][k] ?? "0") * 2}");
-                            totalPoints += (int.parse(
-                                    select3.matrixList[i][j][k] ?? "0") *
-                                2);
+                            if (select3.matrixList[i][j][k] != "" &&
+                                select3.matrixList[i][j][k] != "0") {
+                              selectedCharacters.add(
+                                  "${select3.checkbox[i]}-$j$k - ${int.parse(select3.matrixList[i][j][k] ?? "0") * 2}");
+                              totalPoints += (int.parse(
+                                      select3.matrixList[i][j][k] ?? "0") *
+                                  2);
+                            }
                           }
                         }
                       }
-                    }
+                      
 
                     String slipDate = DateFormat('dd/MM/yyyy HH:mm:ss')
-                        .format(DateTime.now());
+                      .format(DateTime.now());
 
                     final body = {
                       "transaction_id": txnId,
-                      "gamedate_times": selectedTimes
-                          .split(",")
-                          .map((time) => time.trim())
-                          .where((time) => time.isNotEmpty)
-                          .toList(),
+                      "gamedate_times": selectedTimes.split(",").map((time) => time.trim()).where((time) => time.isNotEmpty).toList(),
                       "slipdate_time": slipDate,
                       "points": (totalPoints).toString(),
                       "GamePlay": selectedCharacters,
-                      "total_amount": totalPoints * countTimeSlots
+                      "total_amount": totalPoints*countTimeSlots
                     };
-
+                    
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -429,22 +419,22 @@ class _HomeBottomState extends State<HomeBottom> {
                         );
                       },
                     );
-                  } else {
-                    if (select.grandTotal == 0) {
-                      _showTimeSlotModal(context, "Please add tickets!!!");
-                    } else {
-                      _showTimeSlotModal(context, "Please select time slots!!!");
+
+                  }else{
+                    if(select.grandTotal==0){
+                      _showTimeSlotModal(context,"Please add tickets!!!");
+                    }else{
+                      _showTimeSlotModal(context,"Please select time slots!!!");
                     }
                   }
+                      
                 },
                 visible: true,
                 color: Colors.amber,
                 textcolor: Colors.white,
               ),
               BottomInput(grandTotal: select.grandTotal, text: "Grand Total"),
-              BottomInput(
-                  grandTotal: select.grandTotal * countTimeSlots,
-                  text: "Net Total"),
+              BottomInput(grandTotal: select.grandTotal*countTimeSlots, text: "Net Total"),
             ],
           ),
         );

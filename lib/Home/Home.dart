@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 
 
+
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
   @override
@@ -18,11 +19,15 @@ class Home extends StatefulWidget {
 }
 
 class HomeWidget extends State<Home> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int grandTotal = 0;
   late Timer _timer1;
   late Timer _timer2;
   DateTime _currentTime = DateTime.now();
-  late int time;
+  // late int time;
+
+
+
 
   @override
   void initState() {
@@ -36,6 +41,10 @@ class HomeWidget extends State<Home> {
     _timer1.cancel();
     _timer2.cancel();
     super.dispose();
+  }
+
+   void _openDrawer() {
+    _scaffoldKey.currentState?.openDrawer();
   }
 
   List<String> times = [
@@ -89,7 +98,7 @@ class HomeWidget extends State<Home> {
       int secondsUntilNextMultipleOf15 = 60 - seconds;
       
       int totalTimeInSeconds = (minutesUntilNextMultipleOf15 * 60) + secondsUntilNextMultipleOf15;
-      time = totalTimeInSeconds;
+      // time = totalTimeInSeconds;
       int minutesLeft = totalTimeInSeconds ~/ 60;
       int secondsLeft = totalTimeInSeconds % 60;
       
@@ -112,6 +121,7 @@ class HomeWidget extends State<Home> {
 
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: const Color.fromARGB(255, 30, 58, 58),
       
       drawer: DrawerWidget(),
@@ -123,7 +133,7 @@ class HomeWidget extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            HomeHeader(nextGame: times[_currentIndex],timeLeft: timeLeft ?? "--:--:--",),
+            HomeHeader(nextGame: times[_currentIndex],timeLeft: timeLeft ?? "--:--:--",openDrawer: _openDrawer,),
             
             const SizedBox(height: 2),
             Row(
@@ -155,7 +165,7 @@ class HomeWidget extends State<Home> {
               ],
             ),
 
-            HomeBottom(time:time),
+            HomeBottom(),
             
           ],
         ),

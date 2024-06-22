@@ -96,6 +96,7 @@ class addBankDetailsState extends State<addBankDetails> {
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
                         hintText: 'Account holder name',
+                        suffixIcon: Icon(Icons.person)
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -107,9 +108,11 @@ class addBankDetailsState extends State<addBankDetails> {
                     const SizedBox(height: 3),
                     TextFormField(
                       controller: accountNumber,
+                      obscureText: true,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
                         hintText: 'Account Number',
+                        suffixIcon: Icon(Icons.lock)
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -124,6 +127,7 @@ class addBankDetailsState extends State<addBankDetails> {
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(
                         hintText: 'UPI Id',
+                        suffixIcon: Icon(Icons.account_box)
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -140,6 +144,7 @@ class addBankDetailsState extends State<addBankDetails> {
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
                         hintText: 'IFSC code',
+                        suffixIcon: Icon(Icons.code)
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {

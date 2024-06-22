@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:n1gaming/API/SignUp/RegisterAPI.dart';
 import 'package:n1gaming/Modal/ErrorModal.dart';
 import 'package:n1gaming/Login/Login.dart';
+import 'package:n1gaming/Modal/notVerifiedUser.dart';
 import 'package:n1gaming/Register/OTPVerificationModal.dart';
 import 'package:n1gaming/Modal/loadingModal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -169,6 +170,8 @@ class RegisterRightContentState extends State<RegisterRightContent> {
                           return OTPVerificationdDialog(email: _emailController.text,);
                         },
                       );
+                    }else if(statusCode==200){
+                      userNotVerified(context, "User already registered with given mail id!!! Please complete email verification.", _emailController.text);
                     }else{
                       showErrorDialog(context, error);
                     }

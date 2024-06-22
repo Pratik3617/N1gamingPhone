@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,12 +14,10 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   Future<void> _navigate() async {
-    
 
     await Future.delayed(const Duration(seconds: 3));
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final bool isLoggedin = prefs.getBool('isLoggedIn')?? false;
-    print(isLoggedin);
     
     if (isLoggedin) {
       Navigator.pushReplacement(
@@ -46,11 +44,22 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color.fromARGB(255, 18, 39, 39),
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 18, 39, 39),
       body: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/icon.png',
+              width: 250, 
+              height: 250, 
+            ),
+            const SizedBox(height: 10), 
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ],
         ),
       ),
     );

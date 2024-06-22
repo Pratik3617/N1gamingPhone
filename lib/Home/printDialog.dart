@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:n1gaming/Modal/ErrorModal.dart';
 import 'package:n1gaming/Provider/GameSelector.dart';
 import 'package:n1gaming/Modal/loadingModal.dart';
@@ -17,8 +18,62 @@ Dialog buildPrintDialog({
   required int totalPoints,
   required int countTimeSlots,
   required dynamic body,
-  required int time,
-}){
+}) {
+  List<DateTime> parseTimeSlots(String timeSlotsString) {
+    DateFormat format = DateFormat("dd/MM/yyyy hh:mm a");
+    return timeSlotsString
+        .split(',')
+        .where((timeSlot) => timeSlot.isNotEmpty)
+        .map((timeSlot) => format.parse(timeSlot.trim()))
+        .toList();
+  }
+
+  bool isTimeSlotInPast(DateTime timeSlot) {
+    DateTime now = DateTime.now();
+    return timeSlot.isBefore(now);
+  }
+
+  
+  Future<void> processPlayAction(BuildContext context) async {
+    showLoadingDialog(context);
+
+    Map<String, dynamic> response = await Provider.of<GameSelector>(context, listen: false).postGameData(body);
+
+    int statusCode = response['statusCode'];
+    String message = response['message'];
+
+    hideLoadingDialog(context);
+
+    if (statusCode == 201) {
+      // Success, you can proceed with your login
+      Navigator.of(context).pop();
+      Provider.of<GameSelector>(context, listen: false).resetMatrixData();
+      Provider.of<GameSelector>(context, listen: false).resetRowColumnsControllers();
+      Provider.of<GameSelector>(context, listen: false).resetControllers();
+      Provider.of<GameSelector>(context, listen: false).resetTimes();
+      Provider.of<GameSelector>(context, listen: false).resetCheckBox();
+      showSuccessDialog(context, message);
+    } else {
+      Navigator.of(context).pop();
+      showErrorDialog(context, message);
+    }
+  }
+
+  void checkTimeSlots(BuildContext context) {
+    List<DateTime> timeSlots = parseTimeSlots(selectedTimes);
+    DateTime now = DateTime.now();
+    DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+
+    for (DateTime timeSlot in timeSlots) {
+      if (dateFormat.format(timeSlot) == dateFormat.format(now) && isTimeSlotInPast(timeSlot)) {
+        showErrorDialog(context, "Error: Selected time ${DateFormat('hh:mm a').format(timeSlot)} is in the past.");
+        return;
+      }
+    }
+    // If no errors, proceed with the original play button action
+    processPlayAction(context);
+  }
+
 
   return Dialog(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
@@ -129,17 +184,15 @@ Dialog buildPrintDialog({
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
                     const SizedBox(height: 10),
                     Text(
-                      "Total Quantity : ${totalPoints*countTimeSlots}   Total Points : ${totalPoints*countTimeSlots}",
+                      "Total Quantity : ${totalPoints * countTimeSlots}   Total Points : ${totalPoints * countTimeSlots}",
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    
                   ],
                 ),
               ),
@@ -179,35 +232,7 @@ Dialog buildPrintDialog({
                 SizedBox(
                   height: 40.0,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      if(time > 30){
-                        showLoadingDialog(context);
-                      
-                        Map<String, dynamic> response = await Provider.of<GameSelector>(context, listen: false).postGameData(body);
-                        
-                        int statusCode = response['statusCode'];
-                        String message = response['message'];
-
-                        hideLoadingDialog(context);
-                        
-                        if (statusCode == 201) {
-                          // Success, you can proceed with your login
-                          Navigator.of(context).pop();
-                          Provider.of<GameSelector>(context, listen: false).resetMatrixData();
-                          Provider.of<GameSelector>(context, listen: false).resetRowColumnsControllers();
-                          Provider.of<GameSelector>(context, listen: false).resetControllers();
-                          Provider.of<GameSelector>(context, listen: false).resetTimes();
-                          Provider.of<GameSelector>(context, listen: false).resetCheckBox();
-                          showSuccessDialog(context, message);
-                          // Navigator.of(context, rootNavigator: true).pop();
-                        } else {
-                          Navigator.of(context).pop();
-                          showErrorDialog(context, message);
-                        }
-                      }else{
-                        showErrorDialog(context, "You cannot play for this time slot!!!");
-                      }
-                    },
+                    onPressed: () => checkTimeSlots(context),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
                       side: MaterialStateProperty.all<BorderSide>(
@@ -239,3 +264,5 @@ Dialog buildPrintDialog({
     ),
   );
 }
+
+

@@ -22,7 +22,7 @@ class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
   Future<int> resetPassword() async {
     var response = await forgotPassword(_emailController.text);
     var responseBody = json.decode(response.body);
-    print("response body: ${response.statusCode}");
+    
     if (response.statusCode == 200) {
       resetError = responseBody['message'];
     } else {

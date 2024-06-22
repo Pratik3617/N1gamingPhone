@@ -1,7 +1,12 @@
 // ignore_for_file: prefer_final_fields, use_build_context_synchronously, camel_case_types
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:n1gaming/API/Home/withDrawApi.dart';
+import 'package:n1gaming/Modal/ErrorModal.dart';
 import 'package:n1gaming/Modal/loadingModal.dart';
+import 'package:n1gaming/Modal/successModal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class withdrawMoney extends StatefulWidget {
@@ -16,7 +21,7 @@ class withdrawMoneyState extends State<withdrawMoney> {
 
   final _formKey = GlobalKey<FormState>();
   String? token;
-  String changePassError= "";
+  String message= "";
 
   void getToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -25,20 +30,21 @@ class withdrawMoneyState extends State<withdrawMoney> {
     });
   }
 
-  // Future<int> changeUserPassword() async{
-  //   var response = await changePassword(_currentPassword.text,_newPassword.text,token!);
-  //   var responseBody = json.decode(response.body);
-  //   if (response.statusCode == 200) {
-  //     changePassError = responseBody['message'];
-  //   } else {
-  //     changePassError = responseBody['message'];
-  //   }
-  //   _currentPassword.text="";
-  //   _newPassword.text="";
-  //   _confirmPassword.text="";
-    
-  //   return response.statusCode;
-  // }
+  Future<int> withdrawRequest() async {
+    String withdrawId = "WXN${DateTime.now().millisecondsSinceEpoch}";
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+  
+    var response = await withdrawAPI(amount.text, token!,withdrawId);
+ 
+    var responseBody = json.decode(response.body);
+    if (response.statusCode == 201) {
+      message = responseBody['success'];
+    } else {
+      message = responseBody['message'];
+    }
+    return response.statusCode;
+  }
 
   @override
   void initState() {
@@ -88,6 +94,7 @@ class withdrawMoneyState extends State<withdrawMoney> {
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
                         hintText: 'Enter amount',
+                        suffixIcon: Icon(Icons.currency_rupee)
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -105,9 +112,13 @@ class withdrawMoneyState extends State<withdrawMoney> {
                 onPressed: () async{
                   if (_formKey.currentState!.validate()) {
                     showLoadingDialog(context);
-                    // int statusCode = await changeUserPassword();
+                    int statusCode = await withdrawRequest();
                     hideLoadingDialog(context);
-                    
+                    if(statusCode == 201){
+                      showSuccessDialog(context, message);
+                    }else{
+                      showErrorDialog(context, message);
+                    }
                   }
                 },
                 style: ButtonStyle(

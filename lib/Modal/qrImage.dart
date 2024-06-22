@@ -7,14 +7,14 @@ void qrDialog(BuildContext context, String imagePath, String upi) {
     builder: (BuildContext context) {
       return AlertDialog(
         content: SizedBox(
-          height: MediaQuery.of(context).size.height*0.9,
+          height: MediaQuery.of(context).size.height * 0.9,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Image.network(
                 imagePath,
-                width: 220,
-                height: 220,
+                width: 180,
+                height: 180,
                 fit: BoxFit.contain,
                 errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
                   return const Text(
@@ -30,34 +30,31 @@ void qrDialog(BuildContext context, String imagePath, String upi) {
                   fontFamily: 'SansSerif',
                   fontSize: 16.0,
                   color: Colors.black,
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-
-              TextButton(
-              onPressed: () {
-                showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return const PaymentSubmissionForm();
-                },
-              );
-              },
-              child: const Text(
-                'Payment Form',
-                style: TextStyle(
-                  fontFamily: "SansSerif",
-                  fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 30, 58, 58),
                 ),
               ),
-            ),
-
-            
-          ],
+              TextButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const PaymentSubmissionForm();
+                    },
+                  );
+                },
+                child: const Text(
+                  'Payment Form',
+                  style: TextStyle(
+                    fontFamily: "SansSerif",
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 30, 58, 58),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-        )
       );
     },
   );

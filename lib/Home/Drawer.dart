@@ -1,13 +1,14 @@
-// ignore_for_file: use_super_parameters, prefer_const_constructors_in_immutables, use_build_context_synchronously, non_constant_identifier_names
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:n1gaming/API/Account/accountHistoryApi.dart';
 import 'package:n1gaming/API/Home/getQR.dart';
 import 'package:n1gaming/API/Home/showTransactionAPI.dart';
 import 'package:n1gaming/API/Login/getWalletAPI.dart';
+import 'package:n1gaming/API/Login/logoutAPI.dart';
 import 'package:n1gaming/API/Result/resultAPI.dart';
+import 'package:n1gaming/Account/account.dart';
 import 'package:n1gaming/Modal/ChangePassword.dart';
 import 'package:n1gaming/Modal/ErrorModal.dart';
 import 'package:n1gaming/Modal/addBankDetails.dart';
@@ -18,6 +19,7 @@ import 'package:n1gaming/Modal/withdrawMoney.dart';
 import 'package:n1gaming/Login/Login.dart';
 import 'package:n1gaming/Provider/ResultProvider.dart';
 import 'package:n1gaming/Provider/TransactionProvider.dart';
+import 'package:n1gaming/Provider/accountsProvider.dart';
 import 'package:n1gaming/Result/Result.dart';
 import 'package:n1gaming/Transaction/Transaction.dart';
 import 'package:provider/provider.dart';
@@ -33,8 +35,9 @@ class DrawerWidgetState extends State<DrawerWidget> {
   String? username;
   int? balance;
   String qrMessage = "";
-  String path="";
-  String upi="";
+  String path = "";
+  String upi = "";
+  final String baseUrl = 'https://n1gaming-backend-app.onrender.com';
 
   @override
   void initState() {
@@ -57,8 +60,20 @@ class DrawerWidgetState extends State<DrawerWidget> {
 
   void userLogout() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token',"");
-    await prefs.setBool('isLoggedIn',false);
+    await prefs.setString('token', "");
+    await prefs.setBool('isLoggedIn', false);
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  Future<int> logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
+    var response = await logoutAPI(token!);
+    return response.statusCode;
   }
 
   void getBalance() async {
@@ -83,12 +98,12 @@ class DrawerWidgetState extends State<DrawerWidget> {
 
   Future<void> _TodayResult() async {
     try {
-        DateTime today = DateTime.now();
-        DateTime currentDate = DateTime(today.year, today.month, today.day);
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        var token = prefs.getString('token');
-        final response = await fetchResult(token!, currentDate);
-        if (response.containsKey('error')) {
+      DateTime today = DateTime.now();
+      DateTime currentDate = DateTime(today.year, today.month, today.day);
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      var token = prefs.getString('token');
+      final response = await fetchResult(token!, currentDate);
+      if (response.containsKey('error')) {
         context.read<ShowResultProvider>().updateResult([]);
       } else {
         List<dynamic> localDataList = response['result'];
@@ -102,9 +117,9 @@ class DrawerWidgetState extends State<DrawerWidget> {
           builder: (context) => Result(),
         ),
       );
-      } catch (e) {
-        print('Failed to fetch data: $e');
-      }
+    } catch (e) {
+      print('Failed to fetch data: $e');
+    }
   }
 
   Future<void> getUserBalance() async {
@@ -122,21 +137,20 @@ class DrawerWidgetState extends State<DrawerWidget> {
     var response = await getQR(token!);
     var responseBody = json.decode(response.body);
     print(responseBody);
+
     if (response.statusCode == 200) {
-      path = responseBody['image'];
+      path = baseUrl + responseBody['image'];
       upi = responseBody['upi_id'];
-    }else{
+    } else {
       qrMessage = responseBody['message'];
     }
     return response.statusCode;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.36,
-      
       child: Drawer(
         child: Column(
           children: <Widget>[
@@ -173,11 +187,36 @@ class DrawerWidgetState extends State<DrawerWidget> {
                         color: Color.fromARGB(255, 30, 58, 58),
                       ),
                     ),
-                    onTap: () async{
+                    onTap: () async {
                       await getUserBalance();
                     },
                   ),
-
+                  ListTile(
+                    leading: const Icon(
+                      Icons.qr_code, // Choose your desired icon
+                      color: Color.fromARGB(255, 30, 58, 58), // Icon color
+                    ),
+                    title: const Text(
+                      'Recharge',
+                      style: TextStyle(
+                        fontFamily: 'SansSerif',
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                        color: Color.fromARGB(255, 30, 58, 58),
+                      ),
+                    ),
+                    onTap: () async {
+                      showLoadingDialog(context);
+                      int statusCode = await getQRDetails();
+                      hideLoadingDialog(context);
+                      if (statusCode == 200) {
+                        qrDialog(context, path, upi);
+                      } else {
+                        showErrorDialog(context, qrMessage);
+                      }
+                    },
+                  ),
                   ListTile(
                     leading: const Icon(
                       Icons.list_alt_outlined, // Choose your desired icon
@@ -193,7 +232,7 @@ class DrawerWidgetState extends State<DrawerWidget> {
                         color: Color.fromARGB(255, 30, 58, 58),
                       ),
                     ),
-                    onTap: () async{
+                    onTap: () async {
                       showLoadingDialog(context);
 
                       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -201,11 +240,40 @@ class DrawerWidgetState extends State<DrawerWidget> {
                       TransactionProvider transactionProvider = Provider.of<TransactionProvider>(context, listen: false);
                       await fetchTransactionAPI(token!, transactionProvider);
                       hideLoadingDialog(context);
-                      
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const Transaction(),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(
+                      Icons.history, // Choose your desired icon
+                      color: Color.fromARGB(255, 30, 58, 58), // Icon color
+                    ),
+                    title: const Text(
+                      'Account History',
+                      style: TextStyle(
+                        fontFamily: 'SansSerif',
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                        color: Color.fromARGB(255, 30, 58, 58),
+                      ),
+                    ),
+                    onTap: () async {
+                      final SharedPreferences prefs = await SharedPreferences.getInstance();
+                      var token = prefs.getString('token');
+                      Provider.of<AccountHistoryProvider>(context, listen: false)
+                          .fetchAccountHistory(token!);
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Account(),
                         ),
                       );
                     },
@@ -233,32 +301,6 @@ class DrawerWidgetState extends State<DrawerWidget> {
                           builder: (context) => Result(),
                         ),
                       );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(
-                      Icons.qr_code, // Choose your desired icon
-                      color: Color.fromARGB(255, 30, 58, 58), // Icon color
-                    ),
-                    title: const Text(
-                      'QR',
-                      style: TextStyle(
-                        fontFamily: 'SansSerif',
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                        color: Color.fromARGB(255, 30, 58, 58),
-                      ),
-                    ),
-                    onTap: () async{
-                      showLoadingDialog(context);
-                      int statusCode = await getQRDetails();
-                      hideLoadingDialog(context);
-                      if(statusCode==200){
-                        qrDialog(context, "https://n1gaming-backend-app.onrender.com$path", upi);
-                      }else{
-                        showErrorDialog(context, qrMessage);
-                      }
                     },
                   ),
                   ListTile(
@@ -335,30 +377,6 @@ class DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   ListTile(
                     leading: const Icon(
-                      Icons.payment_outlined, // Choose your desired icon
-                      color: Color.fromARGB(255, 30, 58, 58), // Icon color
-                    ),
-                    title: const Text(
-                      'Payment',
-                      style: TextStyle(
-                        fontFamily: 'SansSerif',
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                        color: Color.fromARGB(255, 30, 58, 58),
-                      ),
-                    ),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const PaymentSubmissionForm();
-                        },
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(
                       Icons.lock_outline, // Choose your desired icon
                       color: Color.fromARGB(255, 30, 58, 58), // Icon color
                     ),
@@ -372,14 +390,13 @@ class DrawerWidgetState extends State<DrawerWidget> {
                         color: Color.fromARGB(255, 30, 58, 58),
                       ),
                     ),
-                    onTap: () {
-                      userLogout();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
-                        ),
-                      );
+                    onTap: () async {
+                      showLoadingDialog(context);
+                      int statuscode = await logout();
+                      hideLoadingDialog(context);
+                      if (statuscode == 200) {
+                        userLogout();
+                      }
                     },
                   ),
                 ],
