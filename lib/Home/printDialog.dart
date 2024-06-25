@@ -70,7 +70,7 @@ Dialog buildPrintDialog({
         return;
       }
     }
-    // If no errors, proceed with the original play button action
+
     processPlayAction(context);
   }
 

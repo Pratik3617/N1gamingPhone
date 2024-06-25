@@ -17,23 +17,39 @@ class InternetController extends GetxController{
         titleText: Container(
           width: double.infinity,
           height: Get.size.height*0.835,
-          child: Column(children: [
-            Center(
-              child: Icon(Icons.wifi_off,size: 120,color: Colors.white,),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Icon(Icons.wifi_off, size: 120, color: Colors.white),
+                ),
+                Text(
+                  "No internet connection",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
-            Text("No internet connection",style: TextStyle(
-              fontSize: 25,
-              fontWeight:FontWeight.bold,
-              color: Colors.white
-            ),)
-          ],),
+          ),
         ),
-        message: "Connect to internet to proceed!!!",
+        messageText: Center(
+          child: Text(
+            "Connect to internet to proceed!!!",
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: Colors.white),
+          ),
+        ),
         duration: Duration(days: 1),
         isDismissible: false,
-        shouldIconPulse: true
+        shouldIconPulse: true,
       );
-    }else{
+    } else {
       if(Get.isSnackbarOpen){
         Get.closeCurrentSnackbar();
       }

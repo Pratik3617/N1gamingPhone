@@ -46,13 +46,20 @@ class HomeWidget extends State<Home> {
   }
 
   List<String> times = [
-    "09:30:00 AM","09:45:00 AM","10:00:00 AM",
-    "10:15:00 AM","10:30:00 AM","10:45:00 AM","11:00:00 AM","11:15:00 AM","11:30:00 AM","11:45:00 AM","12:00:00 PM",
-    "12:15:00 PM","12:30:00 PM","12:45:00 PM","01:00:00 PM","01:15:00 PM","01:30:00 PM","01:45:00 PM","02:00:00 PM",
-    "02:15:00 PM","02:30:00 PM","02:45:00 PM","03:00:00 PM","03:15:00 PM","03:30:00 PM","03:45:00 PM","04:00:00 PM",
-    "04:15:00 PM","04:30:00 PM","04:45:00 PM","05:00:00 PM","05:15:00 PM","05:30:00 PM","05:45:00 PM","06:00:00 PM",
-    "06:15:00 PM","06:30:00 PM","06:45:00 PM","07:00:00 PM","07:15:00 PM","07:30:00 PM","07:45:00 PM","08:00:00 PM",
-    "08:15:00 PM","08:30:00 PM","08:45:00 PM","09:00:00 PM","09:15:00 PM","09:30:00 PM","09:45:00 PM","10:00:00 PM"
+    "09:30:00 AM","09:40:00 AM","09:50:00 AM","10:00:00 AM",
+    "10:10:00 AM","10:20:00 AM","10:30:00 AM","10:40:00 AM","10:50:00 AM","11:00:00 AM",
+    "11:10:00 AM","11:20:00 AM","11:30:00 AM","11:40:00 AM","11:50:00 AM","12:00:00 PM",
+    "12:10:00 PM","12:20:00 PM","12:30:00 PM","12:40:00 PM","12:50:00 PM","01:00:00 PM",
+    "01:10:00 PM","01:20:00 PM","01:30:00 PM","01:40:00 PM","01:50:00 PM","02:00:00 PM",
+    "02:10:00 PM","02:20:00 PM","02:30:00 PM","02:40:00 PM","02:50:00 PM","03:00:00 PM",
+    "03:10:00 PM","03:20:00 PM","03:30:00 PM","03:40:00 PM","03:50:00 PM","04:00:00 PM",
+    "04:10:00 PM","04:20:00 PM","04:30:00 PM","04:40:00 PM","04:50:00 PM","05:00:00 PM",
+    "05:10:00 PM","05:20:00 PM","05:30:00 PM","05:40:00 PM","05:50:00 PM","06:00:00 PM",
+    "06:10:00 PM","06:20:00 PM","06:30:00 PM","06:40:00 PM","06:50:00 PM","07:00:00 PM",
+    "07:10:00 PM","07:20:00 PM","07:30:00 PM","07:40:00 PM","07:50:00 PM","08:00:00 PM",
+    "08:10:00 PM","08:20:00 PM","08:30:00 PM","08:40:00 PM","08:50:00 PM","09:00:00 PM",
+    "09:10:00 PM","09:20:00 PM","09:30:00 PM","09:40:00 PM","09:50:00 PM","10:00:00 PM",
+    "10:10:00 PM","10:20:00 PM","10:30:00 PM","10:40:00 PM","10:50:00 PM","11:00:00 PM"
   ];
 
   int _currentIndex = 0;
@@ -88,14 +95,14 @@ class HomeWidget extends State<Home> {
     });
   }
   
-  String? timeToNextMultipleOf15(DateTime currentTime) {
-    if (((currentTime.hour == 9 && currentTime.minute>=15) || (currentTime.hour >=10) )&& currentTime.hour < 22) {
+  String? timeToNextMultipleOf10(DateTime currentTime) {
+    if (((currentTime.hour == 9 && currentTime.minute>=20) || (currentTime.hour >=10) )&& currentTime.hour < 23) {
       int minutes = currentTime.minute;
       int seconds = currentTime.second;
-      int minutesUntilNextMultipleOf15 = 14 - (minutes % 15);
-      int secondsUntilNextMultipleOf15 = 60 - seconds;
+      int minutesUntilNextMultipleOf10 = 9 - (minutes % 10);
+      int secondsUntilNextMultipleOf10 = 60 - seconds;
       
-      int totalTimeInSeconds = (minutesUntilNextMultipleOf15 * 60) + secondsUntilNextMultipleOf15;
+      int totalTimeInSeconds = (minutesUntilNextMultipleOf10 * 60) + secondsUntilNextMultipleOf10;
       // time = totalTimeInSeconds;
       int minutesLeft = totalTimeInSeconds ~/ 60;
       int secondsLeft = totalTimeInSeconds % 60;
@@ -114,8 +121,8 @@ class HomeWidget extends State<Home> {
   Widget build(BuildContext context) {
     DateTime currentTime = DateTime.now();
     
-    // Calculate time until the next multiple of 15
-    String? timeLeft = timeToNextMultipleOf15(currentTime);
+    // Calculate time until the next multiple of 10
+    String? timeLeft = timeToNextMultipleOf10(currentTime);
 
 
     return Scaffold(
@@ -163,7 +170,7 @@ class HomeWidget extends State<Home> {
               ],
             ),
 
-            HomeBottom(),
+            HomeBottom(nextGame: times[_currentIndex],),
             
           ],
         ),

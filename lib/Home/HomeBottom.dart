@@ -11,7 +11,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeBottom extends StatefulWidget {
-  const HomeBottom({Key? key}) : super(key: key);
+  String nextGame;
+  HomeBottom({Key? key,required this.nextGame}) : super(key: key);
 
   @override
   _HomeBottomState createState() => _HomeBottomState();
@@ -40,147 +41,146 @@ class _HomeBottomState extends State<HomeBottom> {
   }
 
   void _showModal(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          insetPadding: EdgeInsets.zero, // Remove padding around the dialog
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.9,
-            height: MediaQuery.of(context).size.height * 0.9,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            child: SingleChildScrollView(
-              child: Consumer<GameSelector>(
-                builder: (context, value, child) {
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: InputField(
-                              width: MediaQuery.of(context).size.width * 0.35,
-                              height: MediaQuery.of(context).size.height * 0.08,
-                              fontSize: 16,
-                              decoration: BoxDecoration(
-                                color: Colors.yellow.shade300,
-                              ),
-                              text: "(Enter number of games to select)",
-                              onChange: (v) {
-                                try {
-                                  // Your logic for handling input field change
-                                } catch (e) {
-                                  print("Enter a number only");
-                                }
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Check_Button(
-                            width: MediaQuery.of(context).size.width * 0.33,
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        insetPadding: EdgeInsets.zero, // Remove padding around the dialog
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.9,
+          height: MediaQuery.of(context).size.height * 0.9,
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          child: SingleChildScrollView(
+            child: Consumer<GameSelector>(
+              builder: (context, value, child) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: InputField(
+                            width: MediaQuery.of(context).size.width * 0.35,
                             height: MediaQuery.of(context).size.height * 0.08,
-                            isChecked: value.allTimesSelected,
                             fontSize: 16,
                             decoration: BoxDecoration(
-                              color: Colors.orange.shade100,
+                              color: Colors.yellow.shade300,
                             ),
-                            text: "Check to select all games",
-                            onChange: (bool? v) {
-                              DateTime now = DateTime.now();
-                              DateTime tomorrow = DateTime(
-                                now.year,
-                                now.month,
-                                now.day + 1,
-                              );
-                              DateTime tomorrowTime = DateTime(
-                                tomorrow.year,
-                                tomorrow.month,
-                                tomorrow.day,
-                                0,
-                                0,
-                                0,
-                              );
-                              value.allTimesSelected = v!;
-                              if (v == true) {
-                                for (var element in value.times) {
-                                  if (!value.isTimePassed(
-                                      element,
-                                      value.showNextDayTimes
-                                          ? tomorrowTime
-                                          : now)) {
-                                    value.timesValues[element]!.selected = v;
-                                  }
-                                }
-                              } else {
-                                for (var element in value.times) {
+                            text: "(Enter number of games to select)",
+                            onChange: (v) {
+                              try {
+                                // Your logic for handling input field change
+                              } catch (e) {
+                                print("Enter a number only");
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Check_Button(
+                          width: MediaQuery.of(context).size.width * 0.33,
+                          height: MediaQuery.of(context).size.height * 0.08,
+                          isChecked: value.allTimesSelected,
+                          fontSize: 16,
+                          decoration: BoxDecoration(
+                            color: Colors.orange.shade100,
+                          ),
+                          text: "Check to select all games",
+                          onChange: (bool? v) {
+                            DateTime now = DateTime.now();
+                            DateTime tomorrow = DateTime(
+                              now.year,
+                              now.month,
+                              now.day + 1,
+                            );
+                            DateTime tomorrowTime = DateTime(
+                              tomorrow.year,
+                              tomorrow.month,
+                              tomorrow.day,
+                              0,
+                              0,
+                              0,
+                            );
+                            value.allTimesSelected = v!;
+                            if (v == true) {
+                              for (var element in value.times) {
+                                if (!value.isTimePassed(
+                                    element,
+                                    value.showNextDayTimes ? tomorrowTime : now)) {
                                   value.timesValues[element]!.selected = v;
                                 }
                               }
-                              setState(() {
-                                countTimeSlots = _calculateTimeSlots(value);
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomButton(
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            height: MediaQuery.of(context).size.height * 0.08,
-                            text: "Click here to clear all selection",
-                            decoration: const BoxDecoration(
-                              color: Colors.yellow,
-                            ),
-                            onClick: () {
-                              value.allTimesSelected = false;
+                            } else {
                               for (var element in value.times) {
-                                value.timesValues[element]!.selected = false;
+                                value.timesValues[element]!.selected = v;
                               }
-                              value.notifyListeners();
-                              setState(() {
-                                countTimeSlots = 0;
-                              });
-                            },
+                            }
+                            setState(() {
+                              countTimeSlots = _calculateTimeSlots(value);
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomButton(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          height: MediaQuery.of(context).size.height * 0.08,
+                          text: "Click here to clear all selection",
+                          decoration: const BoxDecoration(
+                            color: Colors.yellow,
                           ),
-                          CustomButton(
-                            width: MediaQuery.of(context).size.width * 0.2,
-                            height: MediaQuery.of(context).size.height * 0.08,
-                            decoration: const BoxDecoration(
-                              color: Colors.red,
-                            ),
-                            text: "Close",
-                            onClick: () {
-                              value.showTimes = false;
-                              value.notifyListeners();
-                              Navigator.of(context).pop();
-                            },
+                          onClick: () {
+                            value.allTimesSelected = false;
+                            for (var element in value.times) {
+                              value.timesValues[element]!.selected = false;
+                            }
+                            value.notifyListeners();
+                            setState(() {
+                              countTimeSlots = 0;
+                            });
+                          },
+                        ),
+                        CustomButton(
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          height: MediaQuery.of(context).size.height * 0.08,
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
                           ),
-                          CustomButton(
-                            width: MediaQuery.of(context).size.width * 0.2,
-                            height: MediaQuery.of(context).size.height * 0.08,
-                            decoration: const BoxDecoration(
-                              color: Colors.green,
-                            ),
-                            text: "Ok",
-                            onClick: () {
-                              value.showTimes = false;
-                              value.notifyListeners();
-                              Navigator.of(context).pop();
-                            },
+                          text: "Close",
+                          onClick: () {
+                            value.showTimes = false;
+                            value.notifyListeners();
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        CustomButton(
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          height: MediaQuery.of(context).size.height * 0.08,
+                          decoration: const BoxDecoration(
+                            color: Colors.green,
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 5,),
-                      Wrap(
+                          text: "Ok",
+                          onClick: () {
+                            value.showTimes = false;
+                            value.notifyListeners();
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5,),
+                    SingleChildScrollView(
+                      child: Wrap(
                         children: [
                           for (var i = 0; i < value.times.length; i++) ...[
                             Check_Button(
@@ -225,16 +225,18 @@ class _HomeBottomState extends State<HomeBottom> {
                           ]
                         ],
                       ),
-                    ],
-                  );
-                },
-              ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
 
   int _calculateTimeSlots(GameSelector value) {
     int count = 0;
@@ -352,7 +354,9 @@ class _HomeBottomState extends State<HomeBottom> {
                     }
                   });
 
-                  if (countTimeSlots != 0) {
+                  if(select.grandTotal == 0){
+                    _showTimeSlotModal(context, "Please add tickets!!!");
+                  }else{
                     selectedCharacters.clear();
                     final select3 =
                         Provider.of<GameSelector>(context, listen: false);
@@ -400,6 +404,19 @@ class _HomeBottomState extends State<HomeBottom> {
                     String slipDate = DateFormat('dd/MM/yyyy HH:mm:ss')
                         .format(DateTime.now());
 
+                     DateTime now = DateTime.now();
+                    DateTime thresholdTime = DateTime(now.year, now.month, now.day, 23, 0, 0);
+
+                    if (countTimeSlots == 0) {
+                      DateTime selectedDate = now.isBefore(thresholdTime) ? now : now.add(Duration(days: 1));
+                      String formattedDate = DateFormat('dd/MM/yyyy').format(selectedDate);
+                      String formattedTime = widget.nextGame.substring(0, 5); 
+                      String period = widget.nextGame.substring(8); 
+
+                      selectedTimes = "$formattedDate $formattedTime$period";
+                      print(selectedTimes);
+                      countTimeSlots += 1;
+                    }
                     final body = {
                       "transaction_id": txnId,
                       "gamedate_times": selectedTimes
@@ -429,12 +446,6 @@ class _HomeBottomState extends State<HomeBottom> {
                         );
                       },
                     );
-                  } else {
-                    if (select.grandTotal == 0) {
-                      _showTimeSlotModal(context, "Please add tickets!!!");
-                    } else {
-                      _showTimeSlotModal(context, "Please select time slots!!!");
-                    }
                   }
                 },
                 visible: true,
