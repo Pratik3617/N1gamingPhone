@@ -12,7 +12,7 @@ class Transaction extends StatelessWidget {
   const Transaction({super.key});
 
   Future<http.Response> _showDetailsDialog(String tsnId, String token) async {
-    final url = 'https://n1gaming-backend-app.onrender.com/get-usergame?tsn_id=$tsnId'; 
+    final url = 'https://backend.n1gaming.in/get-usergame?tsn_id=$tsnId'; 
     final response = await http.get(
       Uri.parse(url),
       headers: {

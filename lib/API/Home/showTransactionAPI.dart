@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:n1gaming/Provider/TransactionProvider.dart';
 
 Future<void> fetchTransactionAPI(String token, TransactionProvider transactionProvider) async {
-  var url = Uri.parse('https://n1gaming-backend-app.onrender.com/transaction/');
+  var url = Uri.parse('https://backend.n1gaming.in/transaction/');
 
   var headers = {
     'Content-Type': 'application/json',

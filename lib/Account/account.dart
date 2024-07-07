@@ -18,17 +18,30 @@ class Account extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Center(
-            child: Text(
-              'Account History',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'YoungSerif',
-                decoration: TextDecoration.none,
+          Stack(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
               ),
-            ),
+              const Center(
+                child: Text(
+                  'Account History',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'YoungSerif',
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 5),
           Expanded(
@@ -37,17 +50,23 @@ class Account extends StatelessWidget {
                 if (provider.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (provider.accountHistory.isEmpty) {
-                  return const Center(child: Text('No data available', style: TextStyle(
-                    decoration: TextDecoration.none,
-                    color: Colors.red,
-                    fontFamily: 'SansSerif',
-                    fontSize: 25,
-                  ),));
+                  return const Center(
+                    child: Text(
+                      'No data available',
+                      style: TextStyle(
+                        decoration: TextDecoration.none,
+                        color: Colors.red,
+                        fontFamily: 'SansSerif',
+                        fontSize: 25,
+                      ),
+                    ),
+                  );
                 } else {
                   return ListView.builder(
                     itemCount: provider.accountHistory.length,
                     itemBuilder: (context, index) {
-                      return AccountBox(accountDetails: provider.accountHistory[index]);
+                      return AccountBox(
+                          accountDetails: provider.accountHistory[index]);
                     },
                   );
                 }

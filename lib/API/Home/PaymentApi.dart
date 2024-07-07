@@ -9,7 +9,7 @@ Future<http.Response> paymentAPI(
   String upiId,
   String token,
 ) async {
-  var url = Uri.parse('https://n1gaming-backend-app.onrender.com/recharge_request/');
+  var url = Uri.parse('https://backend.n1gaming.in/recharge_request/');
 
   var request = http.MultipartRequest('POST', url)
     ..headers['Authorization'] = 'Token $token'

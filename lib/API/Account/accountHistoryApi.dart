@@ -2,7 +2,7 @@
 import 'package:http/http.dart' as http;
 
 Future<http.Response>  accounHistoryAPI(String token) async {
-  var url = Uri.parse('https://n1gaming-backend-app.onrender.com/account_history');
+  var url = Uri.parse('https://backend.n1gaming.in/account_history');
 
   var headers = {
     'Authorization': 'Token $token',

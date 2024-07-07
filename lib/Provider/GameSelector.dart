@@ -39,7 +39,7 @@ class GameSelector with ChangeNotifier {
       String jsonBody = jsonEncode(body);
 
       http.Response response = await http.post(
-        Uri.parse("https://n1gaming-backend-app.onrender.com/transaction/"),
+        Uri.parse("https://backend.n1gaming.in/transaction/"),
         headers: headers,
         body: jsonBody
       );

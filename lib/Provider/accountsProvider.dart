@@ -14,7 +14,7 @@ class AccountHistoryProvider with ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final url = Uri.parse('https://n1gaming-backend-app.onrender.com/account_history');
+    final url = Uri.parse('https://backend.n1gaming.in/account_history');
     final headers = {'Authorization': 'Token $token'};
 
     try {

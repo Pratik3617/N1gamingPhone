@@ -2,7 +2,7 @@
 import 'package:http/http.dart' as http;
 
 Future<http.Response> loginUser(String email, String password) async {
-  var url = Uri.parse('https://n1gaming-backend-app.onrender.com/login/');
+  var url = Uri.parse('https://backend.n1gaming.in/login/');
 
   var data = {
     'email': email,

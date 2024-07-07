@@ -3,7 +3,7 @@
 import 'package:http/http.dart' as http;
 
 Future<http.Response> resendOTP(String email) async {
-  var url = Uri.parse('https://n1gaming-backend-app.onrender.com/resend-otp/');
+  var url = Uri.parse('https://backend.n1gaming.in/resend-otp/');
 
   var data = {
     'email': email,

@@ -77,7 +77,7 @@ class DrawerWidgetState extends State<DrawerWidget> {
   void getBalance() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      balance = prefs.getInt('balance');
+      balance = prefs.getInt('walletBalance');
     });
   }
 
@@ -395,6 +395,38 @@ class DrawerWidgetState extends State<DrawerWidget> {
                       if (statuscode == 200) {
                         userLogout();
                       }
+                    },
+                  ),
+
+                  ListTile(
+                    leading: const Icon(
+                      Icons.help_rounded, // Choose your desired icon
+                      color: Color.fromARGB(255, 30, 58, 58), // Icon color
+                    ),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      Text("Contact",
+                        style: TextStyle(
+                          fontFamily: 'SansSerif',
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                          color: Color.fromARGB(255, 30, 58, 58),
+                        ),
+                      ),
+
+                      Text("support@n1gaming.in",
+                        style: TextStyle(
+                          fontFamily: 'SansSerif',
+                          fontSize: 14.0,
+                          letterSpacing: 1,
+                          color: Color.fromARGB(255, 30, 58, 58),
+                        ),
+                      ),
+                    ],),
+                    onTap: (){
+                      
                     },
                   ),
                 ],

@@ -3,7 +3,7 @@
 import 'package:http/http.dart' as http;
 
 Future<http.Response> forgotPasswordOtpValidation(String email, String otp) async {
-  var url = Uri.parse('https://n1gaming-backend-app.onrender.com/reset-password/otp-validation/');
+  var url = Uri.parse('https://backend.n1gaming.in/reset-password/otp-validation/');
 
   var data = {
     'email': email,

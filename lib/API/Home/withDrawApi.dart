@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 Future<http.Response> withdrawAPI(String amount, String token, String withdrawId) async {
-  var url = Uri.parse('https://n1gaming-backend-app.onrender.com/withdraw_request/');
+  var url = Uri.parse('https://backend.n1gaming.in/withdraw_request/');
 
   var data = {
     "withdrawal_id": withdrawId,

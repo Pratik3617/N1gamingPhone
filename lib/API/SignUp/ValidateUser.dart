@@ -3,7 +3,7 @@
 import 'package:http/http.dart' as http;
 
 Future<http.Response> validateUser(String email, String otp) async {
-  var url = Uri.parse('https://n1gaming-backend-app.onrender.com/validate-otp/');
+  var url = Uri.parse('https://backend.n1gaming.in/validate-otp/');
 
   var data = {
     'email': email,

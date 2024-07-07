@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> fetchUsername(String token) async {
-  var url = Uri.parse('https://n1gaming-backend-app.onrender.com/get-username');
+  var url = Uri.parse('https://backend.n1gaming.in/get-username');
 
   var headers = {
     'Content-Type': 'application/json',

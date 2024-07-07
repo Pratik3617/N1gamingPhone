@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 
 Future<http.Response> changePassword(String currentPassword, String newPassword, String token) async {
-  var url = Uri.parse('https://n1gaming-backend-app.onrender.com/update-password/');
+  var url = Uri.parse('https://backend.n1gaming.in/update-password/');
 
   var data = {
     "current_password": currentPassword,

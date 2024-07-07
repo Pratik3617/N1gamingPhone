@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> fetchBalance(String token) async {
-  var url = Uri.parse('https://n1gaming-backend-app.onrender.com/get-balance');
+  var url = Uri.parse('https://backend.n1gaming.in/get-balance');
 
   var headers = {
     'Content-Type': 'application/json',
@@ -19,7 +19,7 @@ Future<void> fetchBalance(String token) async {
   if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('balance', data['balance']);
+      await prefs.setInt('walletBalance', data['balance']);
       
     } else {
       throw Exception('Failed to get balance!!!');

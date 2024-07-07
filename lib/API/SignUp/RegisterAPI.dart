@@ -4,7 +4,7 @@
 import 'package:http/http.dart' as http;
 
 Future<http.Response> registerUser(String username, String email, String password) async {
-  var url = Uri.parse('https://n1gaming-backend-app.onrender.com/register/');
+  var url = Uri.parse('https://backend.n1gaming.in/register/');
 
   var data = {
     'username': username,

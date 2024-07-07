@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:n1gaming/Login/ForgotPassModal.dart';
 import 'package:n1gaming/Modal/notVerifiedUser.dart';
-import 'package:n1gaming/Register/OTPVerificationModal.dart';
 import 'package:n1gaming/Register/Register.dart';
 import 'package:n1gaming/Modal/loadingModal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
